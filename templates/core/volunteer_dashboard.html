@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Volunteer Dashboard - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Top Header -->
+<section class="py-4 bg-white border-bottom">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="rounded-circle border border-2 border-primary" width="54" height="54" style="object-fit: cover;">
+        <div>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-1">
+            <i class="bi bi-person-heart me-1"></i> Volunteer Operations Portal
+          </span>
+          <h1 class="h3 fw-bold mb-0 text-dark">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+          <small class="text-secondary">Track your registered drives, participation history, and upcoming foundation initiatives</small>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-person-vcard me-1"></i> Edit Profile
+        </a>
+        <a href="{% url 'activities' %}" class="btn btn-outline-custom btn-sm">
+          <i class="bi bi-compass me-1"></i> Explore Activities
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Dashboard Content -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-2">
+
+    <!-- Account Verification Status Banner -->
+    {% if profile.status == 'pending' %}
+    <div class="alert alert-warning border shadow-sm p-4 rounded-4 mb-4" role="alert">
+      <div class="d-flex align-items-start gap-3">
+        <i class="bi bi-clock-history fs-2 text-warning flex-shrink-0"></i>
+        <div>
+          <h5 class="fw-bold text-dark mb-1">Verification in Progress (Pending Approval)</h5>
+          <p class="mb-2 text-secondary" style="line-height: 1.6;">
+            Thank you for registering to volunteer! Your account is currently awaiting verification by foundation administrators to ensure safe community coordination.
+            You can view upcoming drives and update your profile details below. Event registration will automatically activate once your account is verified.
+          </p>
+          <div class="small text-muted">
+            <i class="bi bi-telephone-fill me-1"></i> Questions? Connect with our team at <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="fw-bold">{{ foundation.phone|default:"9852827771" }}</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+    {% elif profile.status == 'suspended' %}
+    <div class="alert alert-danger border shadow-sm p-4 rounded-4 mb-4">
+      <h5 class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i> Account Suspended</h5>
+      <p class="mb-0">Your volunteer account has been placed on hold. Please contact foundation administration at {{ foundation.email }}.</p>
+    </div>
+    {% else %}
+    <div class="alert alert-success border shadow-sm p-3 rounded-4 mb-4 d-flex align-items-center gap-3">
+      <i class="bi bi-patch-check-fill fs-3 text-success"></i>
+      <div>
+        <strong class="text-dark">Verified Foundation Volunteer:</strong>
+        <span class="text-muted">Your account is fully approved! You can register for upcoming Sunday drives and community initiatives below.</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Metrics Row -->
+    <div class="row g-3 mb-5">
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm text-center">
+          <div class="text-muted small text-uppercase fw-bold mb-1">Upcoming Registered Drives</div>
+          <div class="fs-2 fw-bold text-primary">{{ upcoming_registrations.count }}</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm text-center">
+          <div class="text-muted small text-uppercase fw-bold mb-1">Drives Attended</div>
+          <div class="fs-2 fw-bold text-success">{{ total_attended }}</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm text-center">
+          <div class="text-muted small text-uppercase fw-bold mb-1">Blood Group Recorded</div>
+          <div class="fs-2 fw-bold text-danger">{{ profile.blood_group|default:"-" }}</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm text-center">
+          <div class="text-muted small text-uppercase fw-bold mb-1">Volunteer Base City</div>
+          <div class="fs-5 fw-bold text-dark mt-2">{{ profile.city|default:"Chhatrapati Sambhajinagar" }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Announcements & Reminders -->
+    {% if announcements %}
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-broadcast text-danger me-2"></i> Official Foundation Announcements
+        </h5>
+      </div>
+      <div class="p-3">
+        {% for ann in announcements %}
+        <div class="p-3 rounded-3 border mb-2 {% if ann.priority == 'urgent' %}bg-danger-subtle text-danger-emphasis{% elif ann.priority == 'high' %}bg-warning-subtle text-warning-emphasis{% else %}bg-light text-dark{% endif %}">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h6 class="fw-bold mb-0">
+              <i class="bi bi-info-circle me-1"></i> {{ ann.title }}
+            </h6>
+            <span class="badge bg-white text-dark border small">{{ ann.created_at|date:"d M Y" }}</span>
+          </div>
+          <p class="mb-0 small" style="line-height: 1.6;">{{ ann.content }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- My Registered Drives -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-calendar-check-fill text-primary me-2"></i> My Upcoming Registered Drives
+        </h5>
+        <span class="badge bg-primary">{{ upcoming_registrations.count }} Scheduled</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Event / Drive</th>
+              <th>Date & Assembly Time</th>
+              <th>Location</th>
+              <th>Drive Coordinator</th>
+              <th>Status</th>
+              <th class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for reg in upcoming_registrations %}
+            <tr>
+              <td class="fw-bold">{{ reg.event.title }}</td>
+              <td>
+                <div>{{ reg.event.event_date|date:"D, d M Y" }}</div>
+                <small class="text-muted">{{ reg.event.start_time|time:"H:i" }} onwards</small>
+              </td>
+              <td class="small">{{ reg.event.location }}</td>
+              <td class="small">
+                {% if reg.event.coordinator %}
+                  {{ reg.event.coordinator.get_full_name|default:reg.event.coordinator.username }}
+                {% else %}
+                  <span class="text-muted">Staff Coordinator</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge bg-success-subtle text-success">
+                  <i class="bi bi-check2 me-1"></i> Confirmed
+                </span>
+              </td>
+              <td class="text-end">
+                <a href="{% url 'event_cancel' reg.event.id %}" class="btn btn-sm btn-outline-danger" 
+                   onclick="return confirm('Are you sure you want to cancel your attendance for this drive?');">
+                  Cancel Registration
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">
+                <i class="bi bi-calendar-x fs-3 d-block mb-1 text-muted"></i>
+                You have not registered for any upcoming drives yet. Browse the schedule below to join!
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Browse Available Upcoming Drives -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-compass-fill text-success me-2"></i> Browse Upcoming Foundation Drives
+        </h5>
+        <small class="text-muted">Choose a community drive to lend a helping hand in Chhatrapati Sambhajinagar</small>
+      </div>
+      <div class="p-3">
+        <div class="row g-4">
+          {% for evt in available_events %}
+          <div class="col-lg-6">
+            <div class="p-4 bg-light rounded-3 border h-100 d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary-subtle text-primary border small">
+                  <i class="bi bi-clock me-1"></i> {{ evt.event_date|date:"D, d M Y" }}
+                </span>
+                <span class="badge bg-light text-muted border small">
+                  {{ evt.registered_count }} / {{ evt.max_volunteers }} registered
+                </span>
+              </div>
+
+              <h5 class="fw-bold text-dark mb-2">{{ evt.title }}</h5>
+              <p class="text-secondary small mb-3 flex-grow-1">{{ evt.description|truncatewords:28 }}</p>
+
+              <div class="small text-muted mb-3">
+                <div><i class="bi bi-geo-alt text-danger me-1"></i> {{ evt.location }}</div>
+                <div><i class="bi bi-clock-history text-secondary me-1"></i> {{ evt.start_time|time:"H:i" }} - {{ evt.end_time|time:"H:i"|default:"Conclusion" }}</div>
+              </div>
+
+              <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                {% if evt.is_full %}
+                  <span class="badge bg-secondary">Capacity Full</span>
+                {% elif profile.status != 'approved' %}
+                  <button class="btn btn-sm btn-secondary disabled" title="Account pending approval">
+                    Registration Locked (Pending)
+                  </button>
+                {% else %}
+                  <a href="{% url 'event_register' evt.id %}" class="btn btn-sm btn-primary-custom">
+                    <i class="bi bi-hand-index-thumb me-1"></i> Register for this Drive
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12 text-center py-4 text-muted">
+            No additional upcoming drives currently open for registration. Please check back soon!
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- My Participation History -->
+    <div class="card border shadow-sm rounded-3 bg-white">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-award-fill text-warning me-2"></i> My Volunteer Participation History
+        </h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Past Event / Drive</th>
+              <th>Date Held</th>
+              <th>Location</th>
+              <th>Attendance Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for past in past_participations %}
+            <tr>
+              <td class="fw-bold">{{ past.event.title }}</td>
+              <td>{{ past.event.event_date|date:"d M Y" }}</td>
+              <td class="small">{{ past.event.location }}</td>
+              <td>
+                {% if past.status == 'attended' %}
+                  <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i> Attended</span>
+                {% elif past.status == 'absent' %}
+                  <span class="badge bg-danger-subtle text-danger">Absent</span>
+                {% else %}
+                  <span class="badge bg-secondary-subtle text-secondary">{{ past.get_status_display }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center py-3 text-muted">No past participation records yet. Complete your first drive to build your record!</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Staff Operations Portal - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Portal Header -->
+<section class="py-4 bg-dark text-white border-bottom">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>
+        <span class="badge bg-warning text-dark mb-2">Staff & Administrative Operations</span>
+        <h1 class="h3 fw-bold mb-0 text-white">Foundation Operations Dashboard</h1>
+        <small class="text-secondary">Chhatrapati Sambhajinagar Community Outreach & Volunteer Intake</small>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'admin:core_foundationsetting_change' 1 %}" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-pencil-square me-1"></i> Edit Foundation Details
+        </a>
+        <a href="{% url 'admin:index' %}" class="btn btn-primary-custom btn-sm">
+          <i class="bi bi-gear-fill me-1"></i> Full Django Admin
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard Analytics & Tables -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-2">
+
+    <!-- KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Total Volunteers</div>
+              <div class="fs-3 fw-bold text-dark">{{ total_volunteers }}</div>
+            </div>
+            <div class="p-3 bg-primary-subtle text-primary rounded-3 fs-4">
+              <i class="bi bi-people-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            <span class="text-warning fw-bold">{{ pending_volunteers }}</span> pending review
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Support Pledges</div>
+              <div class="fs-3 fw-bold text-dark">{{ total_support_inquiries }}</div>
+            </div>
+            <div class="p-3 bg-success-subtle text-success rounded-3 fs-4">
+              <i class="bi bi-heart-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            <span class="text-success fw-bold">{{ new_support_inquiries }}</span> new pledges
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Contact Messages</div>
+              <div class="fs-3 fw-bold text-dark">{{ total_contacts }}</div>
+            </div>
+            <div class="p-3 bg-info-subtle text-info rounded-3 fs-4">
+              <i class="bi bi-envelope-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            <span class="text-info fw-bold">{{ new_contacts }}</span> unread
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Database System</div>
+              <div class="fs-5 fw-bold text-dark">Active & Synced</div>
+            </div>
+            <div class="p-3 bg-secondary-subtle text-secondary rounded-3 fs-4">
+              <i class="bi bi-database-check"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            Admin User: <strong>{{ request.user.username }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Volunteer Registrations -->
+    <div class="card border shadow-sm mb-4">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">
+          <i class="bi bi-person-heart text-primary me-2"></i> Recent Volunteer Registrations
+        </h5>
+        <a href="{% url 'admin:core_volunteer_changelist' %}" class="btn btn-sm btn-outline-secondary">
+          Manage in Admin &rarr;
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Area / Locality</th>
+              <th>Availability</th>
+              <th>Blood Group</th>
+              <th>Status</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in recent_volunteers %}
+            <tr>
+              <td class="fw-bold">{{ v.full_name }}</td>
+              <td><a href="tel:{{ v.phone }}">{{ v.phone }}</a></td>
+              <td>{{ v.city_area }}</td>
+              <td>{{ v.get_availability_display }}</td>
+              <td><span class="badge bg-danger-subtle text-danger">{{ v.blood_group }}</span></td>
+              <td>
+                <span class="badge bg-{% if v.status == 'approved' %}success{% elif v.status == 'contacted' %}info{% elif v.status == 'pending' %}warning text-dark{% else %}secondary{% endif %}">
+                  {{ v.get_status_display }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ v.created_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">No volunteer registrations submitted yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Support Pledges -->
+    <div class="card border shadow-sm mb-4">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">
+          <i class="bi bi-hand-thumbs-up-fill text-success me-2"></i> Recent Support Pledges
+        </h5>
+        <a href="{% url 'admin:core_supportinquiry_changelist' %}" class="btn btn-sm btn-outline-secondary">
+          Manage in Admin &rarr;
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Supporter Name</th>
+              <th>Contact Phone</th>
+              <th>Support Type</th>
+              <th>Preferred Mode</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in recent_supports %}
+            <tr>
+              <td class="fw-bold">{{ s.supporter_name }}</td>
+              <td><a href="tel:{{ s.phone }}">{{ s.phone }}</a></td>
+              <td>{{ s.get_support_type_display }}</td>
+              <td>{{ s.get_preferred_mode_display }}</td>
+              <td>
+                <span class="badge bg-{% if s.status == 'completed' %}success{% elif s.status == 'contacted' %}primary{% elif s.status == 'new' %}warning text-dark{% else %}secondary{% endif %}">
+                  {{ s.get_status_display }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ s.created_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">No support pledges recorded yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Contact Inquiries -->
+    <div class="card border shadow-sm">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">
+          <i class="bi bi-chat-left-dots text-info me-2"></i> Recent Contact Messages
+        </h5>
+        <a href="{% url 'admin:core_contactinquiry_changelist' %}" class="btn btn-sm btn-outline-secondary">
+          Manage in Admin &rarr;
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in recent_contacts %}
+            <tr>
+              <td class="fw-bold">{{ c.name }}</td>
+              <td><a href="tel:{{ c.phone }}">{{ c.phone }}</a></td>
+              <td>{{ c.subject|truncatechars:40 }}</td>
+              <td>
+                <span class="badge bg-{% if c.status == 'responded' %}success{% elif c.status == 'read' %}info{% elif c.status == 'new' %}danger{% else %}secondary{% endif %}">
+                  {{ c.get_status_display }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ c.created_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">No contact messages received yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Become a Volunteer - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="section-subtitle-tag">Join the Compassion Movement</span>
+        <h1 class="display-5 fw-bold mb-3">
+          {% if is_mr %}स्वयंसेवक म्हणून सहभागी व्हा{% else %}Become a Volunteer{% endif %}
+        </h1>
+        <p class="lead text-secondary mb-0">
+          Every Sunday, our members assemble in Chhatrapati Sambhajinagar to feed the hungry, visit orphanages, and serve those who need compassion most.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="{{ foundation.whatsapp_group_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-success">
+          <i class="bi bi-whatsapp me-1"></i> Join WhatsApp Group
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Volunteer Registration Form & Guidelines -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row g-5">
+      <!-- Form Column -->
+      <div class="col-lg-7">
+        <div class="form-card">
+          <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+            <div>
+              <h3 class="fw-bold mb-1">Volunteer Application Form</h3>
+              <p class="text-muted small mb-0">Fill out your details to join our grassroots service community.</p>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+              Free & Open to All
+            </span>
+          </div>
+
+          <form method="post" action="{% url 'volunteer' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                Full Name <span class="text-danger">*</span>
+              </label>
+              {{ form.full_name }}
+              {% if form.full_name.errors %}
+                <div class="text-danger small mt-1">{{ form.full_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Phone & Email -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">
+                  Mobile Number <span class="text-danger">*</span>
+                </label>
+                {{ form.phone }}
+                <div class="form-text small">10-digit Indian phone (e.g. 9852827771)</div>
+                {% if form.phone.errors %}
+                  <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">
+                  Email Address <span class="text-danger">*</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- City Area & Occupation -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.city_area.id_for_label }}" class="form-label">
+                  Locality / City Area <span class="text-danger">*</span>
+                </label>
+                {{ form.city_area }}
+                {% if form.city_area.errors %}
+                  <div class="text-danger small mt-1">{{ form.city_area.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.occupation.id_for_label }}" class="form-label">
+                  Occupation / Student
+                </label>
+                {{ form.occupation }}
+                {% if form.occupation.errors %}
+                  <div class="text-danger small mt-1">{{ form.occupation.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Preferred Service Area & Availability -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.preferred_service_area.id_for_label }}" class="form-label">
+                  Preferred Initiative Area
+                </label>
+                {{ form.preferred_service_area }}
+                {% if form.preferred_service_area.errors %}
+                  <div class="text-danger small mt-1">{{ form.preferred_service_area.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.availability.id_for_label }}" class="form-label">
+                  Availability <span class="text-danger">*</span>
+                </label>
+                {{ form.availability }}
+                {% if form.availability.errors %}
+                  <div class="text-danger small mt-1">{{ form.availability.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Blood Group -->
+            <div class="mb-3">
+              <label for="{{ form.blood_group.id_for_label }}" class="form-label">
+                Blood Group (Helps us connect in life-saving emergencies)
+              </label>
+              {{ form.blood_group }}
+              {% if form.blood_group.errors %}
+                <div class="text-danger small mt-1">{{ form.blood_group.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Motivation -->
+            <div class="mb-4">
+              <label for="{{ form.motivation.id_for_label }}" class="form-label">
+                Why do you want to volunteer? <span class="text-danger">*</span>
+              </label>
+              {{ form.motivation }}
+              {% if form.motivation.errors %}
+                <div class="text-danger small mt-1">{{ form.motivation.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-6">
+              <i class="bi bi-send-check me-2"></i> Submit Volunteer Registration
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Guidelines & Expectations Sidebar -->
+      <div class="col-lg-5">
+        <!-- Guidelines Card -->
+        <div class="p-4 bg-white rounded-4 border shadow-sm mb-4">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-compass-fill text-primary"></i> What to Expect
+          </h4>
+          <ul class="list-unstyled mb-0" style="line-height: 1.8;">
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-5"></i>
+              <div>
+                <strong>Every Sunday Food Drives:</strong>
+                <p class="text-muted small mb-0">Our teams gather on Sunday mornings in Chhatrapati Sambhajinagar to package and distribute fresh food.</p>
+              </div>
+            </li>
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-5"></i>
+              <div>
+                <strong>Winter Blanket Night Drives:</strong>
+                <p class="text-muted small mb-0">During cold months, volunteers participate in night distribution of blankets to homeless people sleeping on streets.</p>
+              </div>
+            </li>
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-5"></i>
+              <div>
+                <strong>Orphanage & Elderly Visits:</strong>
+                <p class="text-muted small mb-0">Spend quality time celebrating festivals, bringing gifts, sweets, and sharing happiness.</p>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-check2-circle text-success fs-5"></i>
+              <div>
+                <strong>Zero Commercial Fee:</strong>
+                <p class="text-muted small mb-0">Volunteering is 100% voluntary and selfless. We value dedication and compassion above all.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Direct Contact Card -->
+        <div class="info-card">
+          <h5 class="fw-bold mb-3">Questions about volunteering?</h5>
+          <p class="text-muted small mb-3">
+            Reach out directly to our foundation coordinator or connect via our official channels:
+          </p>
+          <div class="d-flex flex-column gap-2 small">
+            <div><i class="bi bi-person-fill text-primary me-2"></i><strong>Coordinator:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+            <div><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Phone:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}">{{ foundation.phone|default:"9852827771" }}</a></div>
+            <div><i class="bi bi-envelope-fill text-primary me-2"></i><strong>Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
+            <div><i class="bi bi-geo-alt-fill text-primary me-2"></i><strong>Location:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

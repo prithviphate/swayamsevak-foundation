@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Page Not Found (404) - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background-color: #fdfbf7; min-height: 70vh; display: flex; align-items: center;">
+  <div class="container py-5 text-center">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-9">
+        <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5">
+          <div class="display-1 fw-bold text-primary mb-2" style="font-family: inherit;">404</div>
+
+          <div class="badge bg-warning-subtle text-warning-emphasis px-3 py-2 fs-6 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> Page Not Found
+          </div>
+
+          <h2 class="fw-bold text-dark mb-2">
+            {% if is_mr %}पृष्ठ सापडले नाही{% else %}Page Not Found{% endif %}
+          </h2>
+
+          <p class="text-secondary mb-4" style="line-height: 1.7;">
+            {% if is_mr %}
+              तुम्ही शोधत असलेले पृष्ठ उपलब्ध नाही किंवा त्याचा पत्ता बदलला गेला आहे. कृपया खालील मुख्य दुव्यांचा वापर करून नेव्हिगेट करा.
+            {% else %}
+              We couldn't find the page you were looking for. It may have been moved, renamed, or is temporarily unavailable. Please use the quick links below to navigate our platform.
+            {% endif %}
+          </p>
+
+          <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+            <a href="{% url 'home' %}" class="btn btn-primary-custom px-4">
+              <i class="bi bi-house-door-fill me-1"></i> Home
+            </a>
+            <a href="{% url 'activities' %}" class="btn btn-outline-custom px-3">
+              <i class="bi bi-compass me-1"></i> Our Activities
+            </a>
+            <a href="{% url 'events' %}" class="btn btn-outline-custom px-3">
+              <i class="bi bi-calendar-event me-1"></i> Events
+            </a>
+            <a href="{% url 'volunteer' %}" class="btn btn-outline-secondary px-3">
+              <i class="bi bi-person-heart me-1"></i> Volunteer
+            </a>
+            <a href="{% url 'contact' %}" class="btn btn-outline-secondary px-3">
+              <i class="bi bi-envelope me-1"></i> Contact Us
+            </a>
+          </div>
+
+          <div class="p-3 bg-light rounded-3 border text-muted small">
+            <strong>{{ foundation.name|default:"Swayamsevak Foundation" }}</strong> &bull; {{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}<br>
+            {{ foundation.city|default:"Chhatrapati Sambhajinagar" }} &bull; Helpdesk: <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="text-decoration-none fw-bold">{{ foundation.phone|default:"9852827771" }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

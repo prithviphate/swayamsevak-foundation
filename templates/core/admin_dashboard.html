@@ -1,0 +1,475 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Administrator Dashboard - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Top Header -->
+<section class="py-4 bg-dark text-white border-bottom">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="rounded-circle border border-2 border-warning" width="54" height="54" style="object-fit: cover;">
+        <div>
+          <span class="badge bg-warning text-dark mb-1">
+            <i class="bi bi-shield-lock-fill me-1"></i> Central Administration
+          </span>
+          <h1 class="h3 fw-bold mb-0 text-white">Foundation Administration Dashboard</h1>
+          <small class="text-secondary">Comprehensive governance, volunteer verification, coordinator oversight, and audit logs</small>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'admin:core_foundationsetting_change' 1 %}" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-sliders me-1"></i> Edit Foundation Details
+        </a>
+        <a href="{% url 'admin:index' %}" class="btn btn-primary-custom btn-sm">
+          <i class="bi bi-gear-fill me-1"></i> Full Django Admin
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard Analytics & Management Controls -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-2">
+
+    <!-- KPI Metric Cards (Real DB Data) -->
+    <div class="row g-3 mb-5">
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Total Volunteers</div>
+              <div class="fs-3 fw-bold text-dark">{{ total_volunteers }}</div>
+            </div>
+            <div class="p-3 bg-primary-subtle text-primary rounded-3 fs-4">
+              <i class="bi bi-people-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            <span class="text-warning fw-bold">{{ pending_volunteers_count }}</span> pending verification
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Active Coordinators</div>
+              <div class="fs-3 fw-bold text-dark">{{ active_coordinators_count }}</div>
+            </div>
+            <div class="p-3 bg-info-subtle text-info rounded-3 fs-4">
+              <i class="bi bi-person-gear"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            Leading field activities
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Upcoming Drives</div>
+              <div class="fs-3 fw-bold text-dark">{{ upcoming_events_count }}</div>
+            </div>
+            <div class="p-3 bg-success-subtle text-success rounded-3 fs-4">
+              <i class="bi bi-calendar-event-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            {{ total_events_count }} total recorded drives
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="p-3 bg-white rounded-3 border shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted small text-uppercase fw-bold">Pending Reports</div>
+              <div class="fs-3 fw-bold text-dark">{{ pending_reports_count }}</div>
+            </div>
+            <div class="p-3 bg-warning-subtle text-warning rounded-3 fs-4">
+              <i class="bi bi-file-earmark-text-fill"></i>
+            </div>
+          </div>
+          <div class="small text-muted mt-2">
+            Coordinator field reports awaiting review
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Pending Volunteer Applications -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-person-check-fill text-warning me-2"></i>
+            Pending Volunteer Verification Queue
+          </h5>
+          <small class="text-muted">Review community volunteer registrations before activating event eligibility</small>
+        </div>
+        <span class="badge bg-warning text-dark">{{ pending_volunteers.count }} Pending</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Applicant Name</th>
+              <th>Contact Details</th>
+              <th>Area / Locality</th>
+              <th>Availability</th>
+              <th>Blood Group</th>
+              <th>Applied Date</th>
+              <th class="text-end">Verification Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vol in pending_volunteers %}
+            <tr>
+              <td>
+                <div class="fw-bold text-dark">{{ vol.user.get_full_name|default:vol.user.username }}</div>
+                <small class="text-muted">@{{ vol.user.username }}</small>
+              </td>
+              <td class="small">
+                <div><i class="bi bi-telephone text-muted me-1"></i> <a href="tel:{{ vol.phone }}">{{ vol.phone|default:"-" }}</a></div>
+                <div><i class="bi bi-envelope text-muted me-1"></i> {{ vol.user.email }}</div>
+              </td>
+              <td>{{ vol.city }}</td>
+              <td><span class="badge bg-light text-dark border">{{ vol.get_availability_display }}</span></td>
+              <td><span class="badge bg-danger-subtle text-danger">{{ vol.blood_group }}</span></td>
+              <td class="small text-muted">{{ vol.created_at|date:"d M Y, H:i" }}</td>
+              <td class="text-end">
+                <div class="btn-group btn-group-sm">
+                  <a href="{% url 'admin_update_volunteer_status' vol.id 'approved' %}" class="btn btn-success" title="Approve volunteer">
+                    <i class="bi bi-check-lg"></i> Approve
+                  </a>
+                  <a href="{% url 'admin_update_volunteer_status' vol.id 'suspended' %}" class="btn btn-outline-warning" title="Suspend account">
+                    <i class="bi bi-pause"></i> Suspend
+                  </a>
+                  <a href="{% url 'admin_update_volunteer_status' vol.id 'deactivated' %}" class="btn btn-outline-danger" title="Deactivate account">
+                    <i class="bi bi-x-lg"></i> Reject
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">
+                <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-1"></i>
+                No pending volunteer applications in queue. All accounts are verified!
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 2: Coordinator Management & Assignment -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-8">
+        <div class="card border shadow-sm rounded-3 h-100 bg-white">
+          <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-dark">
+              <i class="bi bi-person-gear text-primary me-2"></i>
+              Active Coordinators & Assigned Domains
+            </h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Coordinator</th>
+                  <th>Phone</th>
+                  <th>Assigned Activities</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for coord in coordinators %}
+                <tr>
+                  <td>
+                    <div class="fw-bold">{{ coord.user.get_full_name|default:coord.user.username }}</div>
+                    <small class="text-muted">{{ coord.user.email }}</small>
+                  </td>
+                  <td>{{ coord.phone|default:"-" }}</td>
+                  <td>
+                    {% for act in coord.assigned_activities.all %}
+                      <span class="badge bg-primary-subtle text-primary border mb-1">{{ act.title }}</span>
+                    {% empty %}
+                      <span class="text-muted small">No activities assigned yet</span>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <a href="{% url 'admin:auth_user_change' coord.user.id %}" class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center py-3 text-muted">No coordinators currently registered.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Assignment Box -->
+      <div class="col-lg-4">
+        <div class="card border shadow-sm rounded-3 h-100 bg-white p-4">
+          <h5 class="fw-bold mb-3 text-dark">
+            <i class="bi bi-link-45deg text-success me-1"></i> Assign Coordinator
+          </h5>
+          <p class="text-muted small mb-3">
+            Grant permission to a coordinator to manage attendance and field reports for an activity.
+          </p>
+
+          <form method="post" action="{% url 'admin_assign_coordinator' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add">
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Select Coordinator</label>
+              <select name="coordinator_id" class="form-select" required>
+                <option value="">-- Choose Coordinator --</option>
+                {% for c in coordinators %}
+                  <option value="{{ c.id }}">{{ c.user.get_full_name|default:c.user.username }} (@{{ c.user.username }})</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-bold">Select Foundation Activity</label>
+              <select name="activity_id" class="form-select" required>
+                <option value="">-- Choose Activity --</option>
+                {% for a in all_activities %}
+                  <option value="{{ a.id }}">{{ a.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 btn-sm">
+              <i class="bi bi-check2-circle me-1"></i> Assign Domain
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Coordinator Activity Reports Pending Review -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-clipboard2-check-fill text-success me-2"></i>
+          Activity Reports Pending Administrator Review
+        </h5>
+        <span class="badge bg-primary">{{ pending_reports.count }} New</span>
+      </div>
+      <div class="p-3">
+        {% for report in pending_reports %}
+        <div class="p-3 bg-light rounded-3 border mb-3">
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+            <div>
+              <h6 class="fw-bold mb-0 text-dark">{{ report.title }}</h6>
+              <small class="text-muted">
+                Event: <strong>{{ report.event.title }}</strong> &bull; Coordinator: <strong>{% if report.coordinator %}{{ report.coordinator.get_full_name|default:report.coordinator.username }}{% else %}Unassigned{% endif %}</strong>
+              </small>
+            </div>
+            <span class="badge bg-warning text-dark">{{ report.get_status_display }}</span>
+          </div>
+
+          <div class="row g-2 mb-2 small">
+            <div class="col-md-3"><strong>Volunteers Present:</strong> {{ report.volunteers_present_count }}</div>
+            <div class="col-md-3"><strong>Beneficiaries Served:</strong> {{ report.beneficiaries_served_count }}</div>
+            <div class="col-md-6"><strong>Submitted:</strong> {{ report.submitted_at|date:"d M Y, H:i" }}</div>
+          </div>
+
+          <p class="text-secondary small mb-3">{{ report.summary }}</p>
+
+          {% if report.challenges_notes %}
+          <div class="alert alert-secondary py-1 px-2 small mb-3">
+            <strong>Challenges / Logistics Notes:</strong> {{ report.challenges_notes }}
+          </div>
+          {% endif %}
+
+          {% if report.photo_1 or report.photo_2 %}
+          <div class="d-flex gap-2 mb-3">
+            {% if report.photo_1 %}
+              <img src="{{ report.photo_1.url }}" alt="Report photo 1" class="img-thumbnail" style="height: 90px; width: 120px; object-fit: cover;">
+            {% endif %}
+            {% if report.photo_2 %}
+              <img src="{{ report.photo_2.url }}" alt="Report photo 2" class="img-thumbnail" style="height: 90px; width: 120px; object-fit: cover;">
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'admin_review_report' report.id %}" class="d-flex flex-wrap gap-2 align-items-center">
+            {% csrf_token %}
+            <input type="text" name="admin_feedback" placeholder="Administrator remarks / suggestions..." class="form-control form-control-sm flex-grow-1">
+            <button type="submit" name="review_action" value="approved" class="btn btn-sm btn-success">
+              <i class="bi bi-check-circle me-1"></i> Approve Report
+            </button>
+            <button type="submit" name="review_action" value="rejected" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-x-circle me-1"></i> Request Revision
+            </button>
+          </form>
+        </div>
+        {% empty %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-journal-check text-muted fs-3 d-block mb-1"></i>
+          No reports currently awaiting review.
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Section 4: Upcoming Scheduled Events -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-calendar3 text-primary me-2"></i>
+          Scheduled Volunteer Events & Registrations
+        </h5>
+        <a href="{% url 'admin:core_event_add' %}" class="btn btn-sm btn-primary-custom">
+          <i class="bi bi-plus-circle me-1"></i> Add New Event
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Event Title</th>
+              <th>Date & Time</th>
+              <th>Location</th>
+              <th>Coordinator</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for evt in upcoming_events %}
+            <tr>
+              <td class="fw-bold">{{ evt.title }}</td>
+              <td>
+                <div>{{ evt.event_date|date:"D, d M Y" }}</div>
+                <small class="text-muted">{{ evt.start_time|time:"H:i" }} - {{ evt.end_time|time:"H:i"|default:"TBD" }}</small>
+              </td>
+              <td class="small">{{ evt.location }}</td>
+              <td>{% if evt.coordinator %}{{ evt.coordinator.get_full_name|default:evt.coordinator.username }}{% else %}Unassigned{% endif %}</td>
+              <td>
+                <span class="badge bg-light text-dark border">
+                  {{ evt.registered_count }} / {{ evt.max_volunteers }}
+                </span>
+              </td>
+              <td><span class="badge bg-success-subtle text-success">{{ evt.get_status_display }}</span></td>
+              <td>
+                <a href="{% url 'admin:core_event_change' evt.id %}" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-pencil"></i> Manage
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">No upcoming events scheduled.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 5: Announcements & Audit Logs -->
+    <div class="row g-4">
+      <!-- Publish Announcement -->
+      <div class="col-lg-5">
+        <div class="card border shadow-sm rounded-3 h-100 bg-white p-4">
+          <h5 class="fw-bold mb-3 text-dark">
+            <i class="bi bi-megaphone-fill text-danger me-1"></i> Post Announcement
+          </h5>
+          <form method="post" action="{% url 'admin_create_announcement' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Title</label>
+              <input type="text" name="title" class="form-control" placeholder="e.g. Sunday Drive Time Update" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Target Audience</label>
+              <select name="target_role" class="form-select">
+                <option value="all">All Community (Volunteers & Coordinators)</option>
+                <option value="volunteer">Volunteers Only</option>
+                <option value="coordinator">Coordinators Only</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Priority</label>
+              <select name="priority" class="form-select">
+                <option value="normal">Normal</option>
+                <option value="high">High Priority</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Announcement Content</label>
+              <textarea name="content" class="form-control" rows="3" placeholder="Enter message text..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100 btn-sm">
+              <i class="bi bi-broadcast me-1"></i> Publish Announcement
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Audit Logs -->
+      <div class="col-lg-7">
+        <div class="card border shadow-sm rounded-3 h-100 bg-white">
+          <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-dark">
+              <i class="bi bi-shield-check text-success me-1"></i> System Audit Log Trail
+            </h5>
+          </div>
+          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-sm table-hover align-middle mb-0 small">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Target / Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in recent_audit_logs %}
+                <tr>
+                  <td class="text-muted">{{ log.timestamp|date:"d M H:i" }}</td>
+                  <td><strong>{% if log.user %}{{ log.user.username }}{% else %}System{% endif %}</strong></td>
+                  <td><span class="badge bg-light text-dark border">{{ log.action }}</span></td>
+                  <td>{{ log.target_repr }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center py-3 text-muted">No audit logs recorded yet.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

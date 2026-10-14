@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Privacy Policy - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2 text-center">
+    <span class="section-subtitle-tag">Transparency & Trust</span>
+    <h1 class="display-5 fw-bold mb-3">
+      {% if is_mr %}गोपनीयता धोरण (Privacy Policy){% else %}Institutional Privacy Policy{% endif %}
+    </h1>
+    <p class="lead text-secondary mx-auto" style="max-width: 740px;">
+      Swayamsevak Foundation is committed to protecting the privacy, dignity, and confidential information of our volunteers, donors, beneficiaries, and visitors.
+    </p>
+  </div>
+</section>
+
+<!-- Content -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="bg-white rounded-4 border shadow-sm p-4 p-md-5">
+
+          <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+            <div>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1">Official Policy</span>
+              <span class="text-muted small ms-2">Effective: January 2024 &bull; Last Updated: 2026</span>
+            </div>
+            <a href="javascript:window.print()" class="btn btn-sm btn-outline-secondary d-none d-md-inline-flex align-items-center gap-1">
+              <i class="bi bi-printer"></i> Print Policy
+            </a>
+          </div>
+
+          <div class="policy-body text-secondary" style="line-height: 1.85;">
+            <h4 class="fw-bold text-dark mb-3">1. Organization Details</h4>
+            <p>
+              This Privacy Policy applies to the official web portal and community operations of <strong>{{ foundation.name|default:"Swayamsevak Foundation" }}</strong> ({{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}), located at <strong>{{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</strong>, Maharashtra, India.
+            </p>
+
+            <h4 class="fw-bold text-dark mt-4 mb-3">2. Information We Collect</h4>
+            <p>
+              We collect only the essential personal information required to facilitate social service operations, volunteer coordination, and donor communication:
+            </p>
+            <ul>
+              <li><strong>Volunteer Registration:</strong> Full name, phone number, email address, residential city, skills, areas of interest, and availability.</li>
+              <li><strong>Inquiry & Support Pledges:</strong> Contact person details, preferred mode of contribution, and inquiry notes.</li>
+              <li><strong>Event Participation:</strong> Attendance records, event registrations, and role allocations.</li>
+              <li><strong>Technical Logs:</strong> Basic server logs, IP addresses, and login attempts for platform security and audit compliance.</li>
+            </ul>
+
+            <h4 class="fw-bold text-dark mt-4 mb-3">3. How Information is Used</h4>
+            <p>
+              All personal information collected is utilized exclusively for non-profit humanitarian and administrative purposes, including:
+            </p>
+            <ul>
+              <li>Organizing Sunday food distribution, blanket distribution, and blood donation drives.</li>
+              <li>Contacting registered volunteers regarding scheduled events and emergency service calls.</li>
+              <li>Responding to donor inquiries, public queries, and collaboration proposals.</li>
+              <li>Maintaining role-based administrative accountability and operational audit trails.</li>
+            </ul>
+
+            <h4 class="fw-bold text-dark mt-4 mb-3">4. Role-Based Access & Data Confidentiality</h4>
+            <p>
+              In accordance with strict security standards:
+            </p>
+            <ul>
+              <li><strong>Volunteers:</strong> Can access and edit only their own personal profile and view public event details. Volunteers never have access to other volunteers' private records.</li>
+              <li><strong>Coordinators:</strong> Can access volunteer rosters strictly for events and activities explicitly assigned to them by administrators.</li>
+              <li><strong>Administrators:</strong> Maintain full oversight for verification, account approval, and security audit logging.</li>
+              <li><strong>No Commercial Exploitation:</strong> Swayamsevak Foundation <em>never</em> sells, rents, leases, or trades any user, volunteer, or donor data to commercial vendors, marketing agencies, or third parties.</li>
+            </ul>
+
+            <h4 class="fw-bold text-dark mt-4 mb-3">5. Beneficiary Dignity & Media Policy</h4>
+            <p>
+              We respect the dignity, privacy, and safety of all individuals we serve, especially children in orphanages, patients in government hospitals, and elderly persons in old-age homes:
+            </p>
+            <ul>
+              <li>Photographic and video documentation is captured and published strictly with appropriate consent and for genuine accountability.</li>
+              <li>No sensationalized or undignified media is recorded or exhibited.</li>
+              <li>Artificial, stock, or fabricated images are strictly prohibited on our platform.</li>
+            </ul>
+
+            <h4 class="fw-bold text-dark mt-4 mb-3">6. Contact for Privacy Inquiries</h4>
+            <p>
+              If you have any questions or wish to update or delete your volunteer profile information, please contact our administrative desk:
+            </p>
+            <div class="p-3 bg-light rounded-3 border">
+              <div><strong>Foundation Founder & President:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+              <div><strong>Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
+              <div><strong>Phone:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}">{{ foundation.phone|default:"9852827771" }}</a></div>
+              <div><strong>Headquarters:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+            </div>
+          </div>
+
+          <div class="border-top pt-4 mt-5 text-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-custom">
+              <i class="bi bi-arrow-left me-1"></i> Back to Homepage
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

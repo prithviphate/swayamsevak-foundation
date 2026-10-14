@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Contact Us - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="section-subtitle-tag">Get in Touch</span>
+        <h1 class="display-5 fw-bold mb-3">
+          {% if is_mr %}आमच्याशी संपर्क साधा{% else %}Contact Swayamsevak Foundation{% endif %}
+        </h1>
+        <p class="lead text-secondary mb-0">
+          We welcome your inquiries, volunteer interest, and collaboration ideas. Connect with our dedicated team in Chhatrapati Sambhajinagar.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-outline-custom">
+          <i class="bi bi-telephone-fill me-1"></i> Call 9852827771
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Info Cards & Form Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+
+    <!-- Top Info Cards Row -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-3 col-md-6">
+        <div class="info-card h-100 text-center p-4">
+          <div class="service-icon-box mx-auto mb-3">
+            <i class="bi bi-geo-alt-fill"></i>
+          </div>
+          <div class="info-label">Office Address</div>
+          <div class="fw-bold text-dark mb-1">{{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+          <div class="small text-muted">Maharashtra, India</div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="info-card h-100 text-center p-4">
+          <div class="service-icon-box mx-auto mb-3">
+            <i class="bi bi-telephone-fill"></i>
+          </div>
+          <div class="info-label">Direct Phone</div>
+          <div class="fw-bold mb-1">
+            <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="text-dark">{{ foundation.phone|default:"9852827771" }}</a>
+          </div>
+          <div class="small text-muted">President: {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="info-card h-100 text-center p-4">
+          <div class="service-icon-box mx-auto mb-3">
+            <i class="bi bi-envelope-fill"></i>
+          </div>
+          <div class="info-label">Email Address</div>
+          <div class="fw-bold mb-1">
+            <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}" class="text-dark text-break small">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a>
+          </div>
+          <div class="small text-muted">Official Correspondence</div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="info-card h-100 text-center p-4">
+          <div class="service-icon-box mx-auto mb-3" style="background-color: #eef7f0; color: #1e4d2b;">
+            <i class="bi bi-whatsapp"></i>
+          </div>
+          <div class="info-label">WhatsApp Community</div>
+          <div class="fw-bold mb-1">
+            <a href="{{ foundation.whatsapp_group_url }}" target="_blank" rel="noopener noreferrer" class="text-success">Active Member Group</a>
+          </div>
+          <div class="small text-muted">Join Regular Drive Updates</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form & Social Connect -->
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <div class="form-card">
+          <div class="border-bottom pb-3 mb-4">
+            <h3 class="fw-bold mb-1">Send Us a Direct Message</h3>
+            <p class="text-muted small mb-0">Fill out this form and a foundation volunteer will respond promptly.</p>
+          </div>
+
+          <form method="post" action="{% url 'contact' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Name -->
+            <div class="mb-3">
+              <label for="{{ form.name.id_for_label }}" class="form-label">
+                Your Full Name <span class="text-danger">*</span>
+              </label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Email & Phone -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">
+                  Email Address <span class="text-danger">*</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">
+                  Mobile Number <span class="text-danger">*</span>
+                </label>
+                {{ form.phone }}
+                <div class="form-text small">10-digit Indian phone (e.g. 9852827771)</div>
+                {% if form.phone.errors %}
+                  <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+              <label for="{{ form.subject.id_for_label }}" class="form-label">
+                Subject <span class="text-danger">*</span>
+              </label>
+              {{ form.subject }}
+              {% if form.subject.errors %}
+                <div class="text-danger small mt-1">{{ form.subject.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Message -->
+            <div class="mb-4">
+              <label for="{{ form.message.id_for_label }}" class="form-label">
+                Your Message / Inquiry <span class="text-danger">*</span>
+              </label>
+              {{ form.message }}
+              {% if form.message.errors %}
+                <div class="text-danger small mt-1">{{ form.message.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-6">
+              <i class="bi bi-send-fill me-2"></i> Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Social Media & Official Details Sidebar -->
+      <div class="col-lg-5">
+        <div class="p-4 bg-white rounded-4 border shadow-sm mb-4">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-share-fill text-primary"></i> Official Social Channels
+          </h4>
+          <p class="text-muted small mb-4">
+            Follow and join Swayamsevak Foundation across our verified channels for photo updates, drive schedules, and community news.
+          </p>
+
+          <div class="d-flex flex-column gap-3">
+            <a href="{{ foundation.instagram_url }}" target="_blank" rel="noopener noreferrer" 
+               class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between text-decoration-none text-dark hover-shadow">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-instagram fs-3 text-danger"></i>
+                <div>
+                  <div class="fw-bold">Instagram</div>
+                  <div class="small text-muted">@swayamsevak_foundation</div>
+                </div>
+              </div>
+              <i class="bi bi-box-arrow-up-right text-muted"></i>
+            </a>
+
+            <a href="{{ foundation.youtube_url }}" target="_blank" rel="noopener noreferrer" 
+               class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between text-decoration-none text-dark">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-youtube fs-3 text-danger"></i>
+                <div>
+                  <div class="fw-bold">YouTube Channel</div>
+                  <div class="small text-muted">@swayamsevakfoundation</div>
+                </div>
+              </div>
+              <i class="bi bi-box-arrow-up-right text-muted"></i>
+            </a>
+
+            <a href="{{ foundation.whatsapp_group_url }}" target="_blank" rel="noopener noreferrer" 
+               class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between text-decoration-none text-dark">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-whatsapp fs-3 text-success"></i>
+                <div>
+                  <div class="fw-bold">WhatsApp Community</div>
+                  <div class="small text-muted">Direct Volunteer Group Chat</div>
+                </div>
+              </div>
+              <i class="bi bi-box-arrow-up-right text-muted"></i>
+            </a>
+
+            <div class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between text-dark opacity-75">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-facebook fs-3 text-primary"></i>
+                <div>
+                  <div class="fw-bold">Facebook Page</div>
+                  <div class="small text-muted">Status: {{ foundation.facebook_status|default:"Pending" }}</div>
+                </div>
+              </div>
+              <span class="badge bg-secondary-subtle text-secondary">Pending</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Belief Callout -->
+        <div class="p-4 bg-primary-subtle text-primary-emphasis rounded-4 border border-primary-subtle text-center">
+          <i class="bi bi-quote fs-2 text-primary d-block mb-1"></i>
+          <p class="fs-5 fw-bold mb-1">
+            "{{ foundation.belief|default:'Humanity is the greatest service.' }}"
+          </p>
+          <div class="small fw-semibold text-primary">
+            {{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

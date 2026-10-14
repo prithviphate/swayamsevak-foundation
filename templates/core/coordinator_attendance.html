@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Record Attendance - {{ event.title }}
+{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="card border shadow-sm rounded-4 bg-white p-4 p-md-5">
+
+          <!-- Header -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <div>
+              <span class="badge bg-primary-subtle text-primary border mb-1">
+                <i class="bi bi-card-checklist me-1"></i> Attendance Management
+              </span>
+              <h3 class="fw-bold mb-1">{{ event.title }}</h3>
+              <div class="small text-muted">
+                <i class="bi bi-calendar3 me-1"></i> {{ event.event_date|date:"D, d M Y" }} &bull;
+                <i class="bi bi-geo-alt me-1"></i> {{ event.location }}
+              </div>
+            </div>
+            <a href="{% url 'coordinator_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+              &larr; Back to Dashboard
+            </a>
+          </div>
+
+          <p class="text-secondary small mb-4">
+            Mark checkboxes for volunteers who were physically present on ground during this drive. Unchecked volunteers will be marked as absent.
+          </p>
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="table-responsive mb-4">
+              <table class="table table-hover align-middle border">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 70px;" class="text-center">Attended</th>
+                    <th>Volunteer Name</th>
+                    <th>Mobile Contact</th>
+                    <th>Area / City</th>
+                    <th>Current Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for reg in registrations %}
+                  <tr>
+                    <td class="text-center">
+                      <input type="checkbox" name="attended_volunteers" value="{{ reg.volunteer.id }}" 
+                             class="form-check-input" style="width: 20px; height: 20px;"
+                             {% if reg.status == 'attended' %}checked{% endif %}>
+                    </td>
+                    <td>
+                      <div class="fw-bold text-dark">{{ reg.volunteer.get_full_name|default:reg.volunteer.username }}</div>
+                      <small class="text-muted">@{{ reg.volunteer.username }}</small>
+                    </td>
+                    <td><a href="tel:{{ reg.volunteer.profile.phone }}">{{ reg.volunteer.profile.phone|default:"-" }}</a></td>
+                    <td>{{ reg.volunteer.profile.city|default:"Chhatrapati Sambhajinagar" }}</td>
+                    <td>
+                      <span class="badge bg-{% if reg.status == 'attended' %}success{% elif reg.status == 'registered' %}primary{% elif reg.status == 'absent' %}danger{% else %}secondary{% endif %}">
+                        {{ reg.get_status_display }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                      No volunteers registered for this event yet.
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% if registrations %}
+            <button type="submit" class="btn btn-primary-custom px-4 py-2 fw-bold">
+              <i class="bi bi-save me-1"></i> Save Verified Attendance
+            </button>
+            {% endif %}
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

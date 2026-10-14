@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  About Us & Our Story - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="section-subtitle-tag">Identity, Purpose & Dedication</span>
+        <h1 class="display-5 fw-bold mb-3">About Swayamsevak Foundation</h1>
+        <p class="lead text-secondary mb-0">
+          Rooted in the spirit of <em>"{{ foundation.tagline_mr|default:'स्वावलंबनातून समाजसेवा' }}"</em>, serving the underprivileged in Chhatrapati Sambhajinagar since {{ foundation.established_date|default:"January 2024" }}.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="{% url 'volunteer' %}" class="btn btn-primary-custom">
+          <i class="bi bi-person-heart me-1"></i> Join Our Sunday Drive
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Official Story Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row g-5">
+      <div class="col-lg-8">
+        <div class="p-4 p-md-5 bg-white rounded-4 border shadow-sm position-relative overflow-hidden watermark-container">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-3 px-3 py-2 fw-bold">
+            <i class="bi bi-book-half me-1"></i> Official Foundation Narrative
+          </span>
+
+          <h2 class="display-6 fw-bold mb-4 text-dark">
+            {% if is_mr %}
+              {{ foundation.our_story_title_mr|default:"आमची गोष्ट – आम्ही का सुरुवात केली" }}
+            {% else %}
+              {{ foundation.our_story_title|default:"Our Story – Why We Started" }}
+            {% endif %}
+          </h2>
+
+          <div class="fs-5 text-dark mb-4 p-3 bg-light rounded-3 border-start border-4 border-primary">
+            <strong>
+              {% if is_mr %}
+                "{{ foundation.belief_mr|default:'मानवता हीच खरी सेवा आहे.' }}"
+              {% else %}
+                "{{ foundation.belief|default:'Humanity is the greatest service.' }}"
+              {% endif %}
+            </strong>
+          </div>
+
+          <div class="story-content text-secondary fs-6" style="line-height: 1.85;">
+            {% if is_mr %}
+              {{ foundation.our_story_text_mr|linebreaks }}
+            {% else %}
+              {{ foundation.our_story_text|linebreaks }}
+            {% endif %}
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Core Belief Banner -->
+          <div class="p-4 bg-success-subtle text-success-emphasis rounded-3 border border-success-subtle d-flex align-items-center gap-3">
+            <i class="bi bi-heart-fill fs-2 text-success"></i>
+            <div>
+              <div class="small text-uppercase fw-bold text-success">Our Foundational Principle</div>
+              <div class="fs-5 fw-bold">
+                {% if is_mr %}
+                  आमचा विश्वास: {{ foundation.belief_mr|default:"मानवता हीच खरी सेवा आहे." }}
+                {% else %}
+                  Our belief: {{ foundation.belief|default:"Humanity is the greatest service." }}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Governance & Information Sidebar -->
+      <div class="col-lg-4">
+        <div class="info-card mb-4 text-center text-lg-start">
+          <div class="text-center mb-3">
+            <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Official Emblem" class="rounded-circle shadow-sm border border-3 border-warning" width="96" height="96" style="object-fit: cover;">
+          </div>
+          <h4 class="fw-bold mb-3 border-bottom pb-2">
+            <i class="bi bi-patch-check-fill text-warning me-2"></i> Foundation Identity
+          </h4>
+
+          <div class="mb-3">
+            <div class="info-label">Official Name</div>
+            <div class="info-value">{{ foundation.name|default:"Swayamsevak Foundation" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">Tagline (Marathi)</div>
+            <div class="info-value text-primary">{{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">Tagline (English)</div>
+            <div class="info-value">{{ foundation.tagline_en|default:"Social Service through Self-Reliance" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">Founder & President</div>
+            <div class="info-value">{{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">Establishment</div>
+            <div class="info-value">{{ foundation.established_date|default:"January 2024" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">City & State</div>
+            <div class="info-value">{{ foundation.city|default:"Chhatrapati Sambhajinagar, Maharashtra, India" }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="info-label">Headquarters Address</div>
+            <div class="info-value">{{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+          </div>
+
+          <div>
+            <div class="info-label">Official Languages</div>
+            <div class="info-value">{{ foundation.languages_supported|default:"English and Marathi" }}</div>
+          </div>
+        </div>
+
+        <!-- Official Channels -->
+        <div class="info-card">
+          <h5 class="fw-bold mb-3 border-bottom pb-2">
+            <i class="bi bi-broadcast text-primary me-2"></i> Official Channels
+          </h5>
+          <ul class="list-unstyled mb-0 small">
+            <li class="py-2 border-bottom d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-instagram text-danger me-2"></i> Instagram:</span>
+              <a href="{{ foundation.instagram_url }}" target="_blank" class="fw-semibold">@swayamsevak_foundation</a>
+            </li>
+            <li class="py-2 border-bottom d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-youtube text-danger me-2"></i> YouTube:</span>
+              <a href="{{ foundation.youtube_url }}" target="_blank" class="fw-semibold">Channel Link</a>
+            </li>
+            <li class="py-2 border-bottom d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-whatsapp text-success me-2"></i> WhatsApp:</span>
+              <a href="{{ foundation.whatsapp_group_url }}" target="_blank" class="fw-semibold">Community Group</a>
+            </li>
+            <li class="py-2 d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-facebook text-primary me-2"></i> Facebook:</span>
+              <span class="badge bg-secondary-subtle text-secondary">{{ foundation.facebook_status|default:"Pending" }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Official Mission & Vision Section -->
+<section class="py-5 bg-white border-top">
+  <div class="container py-3">
+    <div class="row g-4">
+      <!-- Mission Card -->
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 h-100 rounded-4 border bg-light">
+          <div class="d-inline-flex align-items-center gap-2 p-2 px-3 bg-primary-subtle text-primary rounded-pill small fw-bold mb-3">
+            <i class="bi bi-flag-fill"></i>
+            {% if is_mr %}अधिकृत ध्येय{% else %}Official Mission{% endif %}
+          </div>
+          <h3 class="fw-bold mb-3">
+            {% if is_mr %}आमचे ध्येय (Mission){% else %}Our Mission{% endif %}
+          </h3>
+
+          <div class="text-secondary" style="line-height: 1.8;">
+            {% if is_mr %}
+              <p class="lead text-dark">
+                समाजातील प्रत्येक गरजू घटकाकडे मदतीचा हात पुढे करणे आणि करुणा, दयाळूपणा तसेच निःस्वार्थ समर्पणाने मानवतेची सेवा करणे हे आमचे ध्येय आहे.
+              </p>
+              <h5 class="fw-bold text-dark mt-4 mb-3">आमच्या सेवेची मुख्य क्षेत्रे:</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> अनाथालयातील बालकांना मदत, काळजी आणि आवश्यक आधार देणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> वृद्धाश्रमातील ज्येष्ठ नागरिकांची सेवा करणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> गोशाळांमधील मुक्या जनावरांना चारा आणि देखभाल पुरवणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> शासकीय रुग्णालयांतील गरजू रुग्णांना साहाय्य करणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> रक्तदानाला प्रोत्साहन देणे आणि जीवन वाचवणाऱ्या उपक्रमांना पाठबळ देणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> सामाजिक जनजागृती मोहिमा राबवणे.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> समाजकल्याण आणि जनहितकारी उपक्रमांचे आयोजन करणे.</li>
+              </ul>
+              <p class="mt-3">
+                या उपक्रमांच्या माध्यमातून स्वयंसेवक फाउंडेशन समाजात मानवता पसरवून लोकांच्या चेहऱ्यावर हास्य फुलवण्याचा आणि सकारात्मक बदल घडवण्याचा निरंतर प्रयत्न करते.
+              </p>
+            {% else %}
+              <p class="lead text-dark">
+                Our mission is to extend a helping hand to every needy person in society and serve humanity with compassion, kindness, and selfless dedication.
+              </p>
+              <h5 class="fw-bold text-dark mt-4 mb-3">Our key areas of service include:</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Supporting orphanage children by providing help, care, and essential support.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Serving senior citizens in old-age homes.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Providing food and care for animals in cow shelters (Gaushalas).</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Assisting needy patients in government hospitals.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Promoting blood donation and supporting initiatives that help save lives.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Conducting social awareness campaigns.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Organizing community welfare and social service activities.</li>
+              </ul>
+              <p class="mt-3">
+                Through these initiatives, Swayamsevak Foundation strives to spread humanity, bring smiles to people's faces, and make a meaningful difference in society.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Vision Card -->
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 h-100 rounded-4 border bg-light">
+          <div class="d-inline-flex align-items-center gap-2 p-2 px-3 bg-secondary-subtle text-secondary rounded-pill small fw-bold mb-3">
+            <i class="bi bi-eye-fill"></i>
+            {% if is_mr %}अधिकृत दृष्टीकोन{% else %}Official Vision{% endif %}
+          </div>
+          <h3 class="fw-bold mb-3">
+            {% if is_mr %}आमचा दृष्टीकोन (Vision){% else %}Our Vision{% endif %}
+          </h3>
+
+          <div class="text-secondary" style="line-height: 1.85;">
+            {% if is_mr %}
+              <p class="lead text-dark">
+                एक दयाळू, संवेदनशील आणि भूकमुक्त समाज निर्माण करणे जिथे कोणीही उपाशी झोपणार नाही, प्रत्येकजण सन्मानाने जगेल आणि प्रत्येकाला उत्तम जीवन जगण्याची संधी लाभेल, हे आमचे स्वप्न आहे.
+              </p>
+              <p>
+                अन्नदान, शिक्षण, आरोग्यसेवा, पर्यावरण संरक्षण आणि समाजकल्याण यांच्या माध्यमातून सकारात्मक प्रभाव निर्माण करण्याची आमची आकांक्षा आहे. आम्ही अशा समाजाची कल्पना करतो जिथे लोक एकमेकांना आधार देतील, आनंद एकत्र साजरा करतील आणि सर्वांच्या उज्ज्वल भविष्यासाठी कार्य करतील.
+              </p>
+            {% else %}
+              <p class="lead text-dark">
+                Our vision is to build a compassionate and hunger-free society where no one sleeps hungry, everyone lives with dignity, and every individual has the opportunity to lead a better life.
+              </p>
+              <p>
+                We aspire to create a positive impact through hunger relief, education, healthcare, environmental protection, and community welfare. We envision a society where people support one another, celebrate happiness together, and work towards a better future for all.
+              </p>
+            {% endif %}
+          </div>
+
+          <div class="p-3 bg-white rounded-3 border mt-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="badge bg-primary text-white p-2 fs-6">
+                <i class="bi bi-shield-check"></i>
+              </div>
+              <div class="small">
+                <strong>Authenticity Guarantee:</strong>
+                <span class="text-muted d-block">
+                  All foundation information and mission pillars are verified directly from authorized institutional records.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

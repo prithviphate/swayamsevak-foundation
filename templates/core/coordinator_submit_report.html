@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Submit Field Report - {{ event.title }}
+{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border shadow-sm rounded-4 bg-white p-4 p-md-5">
+
+          <!-- Header -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <div>
+              <span class="badge bg-success-subtle text-success border mb-1">
+                <i class="bi bi-file-earmark-arrow-up me-1"></i> Field Activity Reporting
+              </span>
+              <h3 class="fw-bold mb-1">Submit Drive Activity Report</h3>
+              <div class="small text-muted">
+                Event: <strong>{{ event.title }}</strong> &bull; Held on: {{ event.event_date|date:"d M Y" }}
+              </div>
+            </div>
+            <a href="{% url 'coordinator_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+              &larr; Back to Dashboard
+            </a>
+          </div>
+
+          <p class="text-secondary small mb-4">
+            Summarize field execution, record volunteer turnout, log the number of people/animals served, and upload authentic ground photographs for administrator verification.
+          </p>
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 small">
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label for="{{ form.title.id_for_label }}" class="form-label">
+                Report Title <span class="text-danger">*</span>
+              </label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.volunteers_present_count.id_for_label }}" class="form-label">
+                  Volunteers Present <span class="text-danger">*</span>
+                </label>
+                {{ form.volunteers_present_count }}
+                {% if form.volunteers_present_count.errors %}
+                  <div class="text-danger small mt-1">{{ form.volunteers_present_count.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.beneficiaries_served_count.id_for_label }}" class="form-label">
+                  Beneficiaries Directly Served <span class="text-danger">*</span>
+                </label>
+                {{ form.beneficiaries_served_count }}
+                <div class="form-text small">e.g. number of meal packets, blankets, or hospital patients</div>
+                {% if form.beneficiaries_served_count.errors %}
+                  <div class="text-danger small mt-1">{{ form.beneficiaries_served_count.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.summary.id_for_label }}" class="form-label">
+                Field Execution Summary <span class="text-danger">*</span>
+              </label>
+              {{ form.summary }}
+              {% if form.summary.errors %}
+                <div class="text-danger small mt-1">{{ form.summary.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.challenges_notes.id_for_label }}" class="form-label">
+                Logistics Constraints & Field Feedback
+              </label>
+              {{ form.challenges_notes }}
+              {% if form.challenges_notes.errors %}
+                <div class="text-danger small mt-1">{{ form.challenges_notes.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label for="{{ form.photo_1.id_for_label }}" class="form-label">
+                  Authentic Ground Photograph 1
+                </label>
+                {{ form.photo_1 }}
+                {% if form.photo_1.errors %}
+                  <div class="text-danger small mt-1">{{ form.photo_1.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.photo_2.id_for_label }}" class="form-label">
+                  Authentic Ground Photograph 2
+                </label>
+                {{ form.photo_2 }}
+                {% if form.photo_2.errors %}
+                  <div class="text-danger small mt-1">{{ form.photo_2.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-bold">
+              <i class="bi bi-send-check me-1"></i> Submit Report for Administrator Approval
+            </button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,220 @@
+{% load static %}
+<!-- Top Contact & Social Bar -->
+<header class="top-bar">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <span>
+          <i class="bi bi-geo-alt-fill text-warning me-1"></i>
+          {{ foundation.city|default:"Chhatrapati Sambhajinagar, Maharashtra, India" }}
+        </span>
+        <span class="d-none d-md-inline">|</span>
+        <span>
+          <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="text-decoration-none">
+            <i class="bi bi-telephone-fill text-warning me-1"></i>
+            {{ foundation.phone|default:"9852827771" }}
+          </a>
+        </span>
+        <span class="d-none d-lg-inline">|</span>
+        <span class="d-none d-lg-inline">
+          <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}" class="text-decoration-none">
+            <i class="bi bi-envelope-fill text-warning me-1"></i>
+            {{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}
+          </a>
+        </span>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <!-- Language Switcher -->
+        <div class="d-flex align-items-center gap-1" role="group" aria-label="Language Selector">
+          <a href="{% url 'switch_language' 'en' %}" 
+             class="lang-btn {% if not is_mr %}active{% endif %}" 
+             title="Switch to English">
+            English
+          </a>
+          <a href="{% url 'switch_language' 'mr' %}" 
+             class="lang-btn {% if is_mr %}active{% endif %}" 
+             title="मराठी भाषेत पहा">
+            मराठी
+          </a>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="social-icons d-flex align-items-center">
+          <a href="{{ foundation.instagram_url }}" target="_blank" rel="noopener noreferrer" title="Official Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="{{ foundation.youtube_url }}" target="_blank" rel="noopener noreferrer" title="Official YouTube Channel">
+            <i class="bi bi-youtube"></i>
+          </a>
+          <a href="{{ foundation.whatsapp_group_url }}" target="_blank" rel="noopener noreferrer" title="Official WhatsApp Community">
+            <i class="bi bi-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-custom" aria-label="Main Navigation">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+      <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="brand-logo-img" width="46" height="46">
+      <div class="d-flex flex-column">
+        <span class="brand-title">{{ foundation.name|default:"Swayamsevak Foundation" }}</span>
+        <span class="brand-tagline">
+          {% if is_mr %}
+            {{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}
+          {% else %}
+            {{ foundation.tagline_mr }} &bull; {{ foundation.tagline_en }}
+          {% endif %}
+        </span>
+      </div>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" 
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+            {% if is_mr %}मुख्यपृष्ठ{% else %}Home{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+            {% if is_mr %}आमच्याबद्दल{% else %}About Us{% endif %}
+          </a>
+        </li>
+
+        <!-- Key Service Areas Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'service_areas' %}active{% endif %}" 
+             href="{% url 'service_areas' %}" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if is_mr %}कार्यक्षेत्रे{% else %}Key Initiatives{% endif %}
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 py-2" aria-labelledby="servicesDropdown">
+            <li>
+              <a class="dropdown-item fw-bold text-primary" href="{% url 'service_areas' %}">
+                <i class="bi bi-grid-fill me-2"></i>
+                {% if is_mr %}सर्व ७ कार्यक्षेत्रे पहा{% else %}View All 7 Key Areas{% endif %}
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            {% for area in nav_service_areas %}
+            <li>
+              <a class="dropdown-item py-1 small" href="{% url 'activities' %}?area={{ area.slug }}">
+                <i class="bi {{ area.icon_bootstrap }} me-2 text-muted"></i>
+                {% if is_mr %}{{ area.title_mr }}{% else %}{{ area.title }}{% endif %}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'activities activity_detail' %}active{% endif %}" href="{% url 'activities' %}">
+            {% if is_mr %}उपक्रम{% else %}Activities{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'events' %}active{% endif %}" href="{% url 'events' %}">
+            {% if is_mr %}कार्यक्रम{% else %}Events{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'gallery' %}active{% endif %}" href="{% url 'gallery' %}">
+            {% if is_mr %}गॅलरी{% else %}Gallery{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'announcements' %}active{% endif %}" href="{% url 'announcements' %}">
+            {% if is_mr %}बातम्या व कथा{% else %}Stories & Updates{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name in 'impact achievements' %}active{% endif %}" href="{% url 'impact' %}">
+            {% if is_mr %}कार्य व प्रभाव{% else %}Our Impact{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+            {% if is_mr %}संपर्क{% else %}Contact{% endif %}
+          </a>
+        </li>
+      </ul>
+
+      <!-- Action Buttons & Auth Navigation -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        {% if user.is_authenticated %}
+          <!-- Role Dashboard Quick Shortcut -->
+          <a href="{% url dashboard_url_name %}" class="btn btn-outline-custom btn-sm">
+            <i class="bi bi-speedometer2 me-1"></i>
+            {% if user_profile.is_admin_role %}
+              Admin Dashboard
+            {% elif user_profile.is_coordinator_role %}
+              Coordinator Dashboard
+            {% else %}
+              Volunteer Dashboard
+            {% endif %}
+          </a>
+
+          <!-- User Account Menu -->
+          <div class="dropdown">
+            <button class="btn btn-dark btn-sm dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+              <span>{{ user.first_name|default:user.username }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li class="dropdown-header text-uppercase small pb-1">
+                Role: <strong>{{ user_profile.get_role_display|default:"Volunteer" }}</strong>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <a class="dropdown-item py-1" href="{% url dashboard_url_name %}">
+                  <i class="bi bi-grid-fill me-2 text-primary"></i> My Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-1" href="{% url 'profile' %}">
+                  <i class="bi bi-person-vcard me-2 text-secondary"></i> My Profile
+                </a>
+              </li>
+              {% if user_profile.is_admin_role or user.is_staff %}
+              <li>
+                <a class="dropdown-item py-1" href="{% url 'admin:index' %}">
+                  <i class="bi bi-gear-fill me-2 text-warning"></i> Django Admin
+                </a>
+              </li>
+              {% endif %}
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <a class="dropdown-item py-1 text-danger" href="{% url 'logout' %}">
+                  <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                </a>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <!-- Guest / Logged-out Controls -->
+          <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            {% if is_mr %}लॉगिन करा{% else %}Login{% endif %}
+          </a>
+          <a href="{% url 'volunteer' %}" class="btn btn-outline-custom btn-sm">
+            <i class="bi bi-person-heart me-1"></i>
+            {% if is_mr %}स्वयंसेवक व्हा{% else %}Become a Volunteer{% endif %}
+          </a>
+          <a href="{% url 'donate' %}" class="btn btn-primary-custom btn-sm">
+            <i class="bi bi-heart-fill me-1"></i>
+            {% if is_mr %}दान करा{% else %}Donate{% endif %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

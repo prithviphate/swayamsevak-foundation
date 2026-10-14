@@ -1,0 +1,827 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ foundation.name|default:"Swayamsevak Foundation" }} - {{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }} | Chhatrapati Sambhajinagar
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section hero-watermark position-relative overflow-hidden">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <div class="hero-badge">
+          <i class="bi bi-patch-check-fill"></i>
+          <span>{{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }} &bull; Est. {{ foundation.established_date|default:"January 2024" }}</span>
+        </div>
+
+        <h1 class="hero-title">
+          {% if is_mr %}
+            समाजातील प्रत्येक गरजू घटकासाठी मदतीचा हात
+          {% else %}
+            Extending a Helping Hand to Every Needy Person in Society
+          {% endif %}
+        </h1>
+
+        <p class="hero-subtitle">
+          {% if is_mr %}
+            स्वयंसेवक फाउंडेशन, छत्रपती संभाजीनगर. दर रविवारी अन्नदान, अनाथालयातील बालकांना आधार, वृद्धाश्रमातील ज्येष्ठांची सेवा, गोशाळांमधील मुक्या जनावरांची देखभाल आणि जनकल्याण उपक्रम.
+          {% else %}
+            Swayamsevak Foundation was started with one simple belief: <strong>Humanity is the greatest service</strong>. Working actively every Sunday towards a hunger-free society, health support, and community welfare in Chhatrapati Sambhajinagar.
+          {% endif %}
+        </p>
+
+        <!-- Primary Calls to Action -->
+        <div class="d-flex flex-wrap gap-3 pt-2">
+          <a href="{% url 'activities' %}" class="btn btn-outline-custom">
+            <i class="bi bi-compass me-1"></i>
+            {% if is_mr %}उपक्रम पहा{% else %}Explore Activities{% endif %}
+          </a>
+          <a href="{% url 'volunteer' %}" class="btn btn-primary-custom">
+            <i class="bi bi-person-heart me-1"></i>
+            {% if is_mr %}स्वयंसेवक व्हा{% else %}Become a Volunteer{% endif %}
+          </a>
+          <a href="{% url 'donate' %}" class="btn btn-secondary-custom">
+            <i class="bi bi-heart-fill me-1"></i>
+            {% if is_mr %}दान करा / मदत{% else %}Donate & Support{% endif %}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="hero-card-preview">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <span class="quote-tag">
+              <i class="bi bi-info-circle me-1"></i> Official Foundation Details
+            </span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Official Emblem" class="rounded-circle shadow-sm border border-2 border-warning" width="64" height="64" style="object-fit: cover;">
+            <div>
+              <div class="info-label">Official Registered NGO</div>
+              <div class="info-value fs-5 fw-bold mb-0">{{ foundation.name|default:"Swayamsevak Foundation" }}</div>
+              <div class="text-primary fw-semibold small">{{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}</div>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <div class="p-2 bg-light rounded border">
+                <div class="info-label">Founder & President</div>
+                <div class="fw-bold text-dark small">{{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-2 bg-light rounded border">
+                <div class="info-label">Established</div>
+                <div class="fw-bold text-dark small">{{ foundation.established_date|default:"January 2024" }}</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="p-2 bg-light rounded border">
+                <div class="info-label">Official Headquarters</div>
+                <div class="fw-bold text-dark small">{{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-primary-subtle text-primary-emphasis rounded border border-primary-subtle small">
+            <i class="bi bi-quote fs-5 me-1 align-middle"></i>
+            <strong>Core Belief:</strong> "{{ foundation.belief|default:'Humanity is the greatest service.' }}"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Story Spotlight Section -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-3">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <span class="section-subtitle-tag">About Our Journey</span>
+        <h2 class="section-title mb-3">
+          {% if is_mr %}
+            {{ foundation.our_story_title_mr|default:"आमची गोष्ट – आम्ही का सुरुवात केली" }}
+          {% else %}
+            {{ foundation.our_story_title|default:"Our Story – Why We Started" }}
+          {% endif %}
+        </h2>
+        <div class="text-secondary mb-4" style="line-height: 1.8;">
+          {% if is_mr %}
+            <p>स्वयंसेवक फाउंडेशनची सुरुवात एका साध्या पण दृढ विश्वासाने झाली: <strong>मानवता हीच खरी सेवा आहे.</strong></p>
+            <p>गरजू व्यक्तींना मदत करणे आणि भूकमुक्त समाजाच्या दिशेने कार्य करणे हे आमचे मुख्य ध्येय आहे. दर रविवारी आमचे सदस्य एकत्र येऊन गरजू नागरिक, अनाथालयातील बालके, वृद्धाश्रमातील ज्येष्ठ आणि बेघर व्यक्तींना अन्नवाटप करतात.</p>
+            <p>अन्नदानासोबतच आम्ही स्वच्छता मोहिमा, आरोग्य व रक्तदान शिबिरे आणि शैक्षणिक उपक्रम राबवतो. सण, वाढदिवस गरजू घटकांसोबत साजरे करतो आणि हिवाळ्यात रस्त्यावर झोपणाऱ्या नागरिकांना उबदार ब्लँकेट्सचे वाटप करतो.</p>
+          {% else %}
+            <p>Swayamsevak Foundation was started with one simple belief: <strong>Humanity is the greatest service</strong>.</p>
+            <p>Our aim is to help people in need and work towards a hunger-free society. Every Sunday, our members come together to distribute food among underprivileged people, children in orphanages, elderly people, and homeless individuals.</p>
+            <p>Along with hunger relief, we organize cleanliness drives, health and blood donation camps, and educational initiatives. We also celebrate festivals, birthdays, and special occasions with underprivileged communities by sharing food, clothes, sweets, and gifts. During winter, we distribute blankets to people sleeping on the streets.</p>
+          {% endif %}
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'about' %}" class="btn btn-primary-custom">
+            {% if is_mr %}संपूर्ण माहिती व ध्येय वाचा{% else %}Read Full Story & Mission{% endif %}
+            <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+          <a href="{% url 'contact' %}" class="btn btn-outline-secondary">
+            {% if is_mr %}संपर्क साधा{% else %}Contact Our Team{% endif %}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="p-4 bg-light rounded-4 border">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-calendar-check-fill text-primary"></i>
+            {% if is_mr %}नियमित सेवा उपक्रम{% else %}Regular Foundation Drives{% endif %}
+          </h4>
+          <ul class="list-unstyled mb-0">
+            <li class="d-flex align-items-start gap-3 py-2 border-bottom">
+              <span class="badge bg-success-subtle text-success p-2 fs-6"><i class="bi bi-basket2-fill"></i></span>
+              <div>
+                <strong class="d-block text-dark">Every Sunday Food Distribution</strong>
+                <span class="text-muted small">Distributing fresh, hygienic meals to hungry, homeless, and orphanage children.</span>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3 py-2 border-bottom">
+              <span class="badge bg-warning-subtle text-warning p-2 fs-6"><i class="bi bi-snow"></i></span>
+              <div>
+                <strong class="d-block text-dark">Winter Blanket Drives</strong>
+                <span class="text-muted small">Distributing warm blankets to people sleeping exposed on cold streets.</span>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3 py-2 border-bottom">
+              <span class="badge bg-danger-subtle text-danger p-2 fs-6"><i class="bi bi-droplet-half"></i></span>
+              <div>
+                <strong class="d-block text-dark">Blood Donation & Hospital Camps</strong>
+                <span class="text-muted small">Emergency blood network and assisting patients in government hospitals.</span>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-3 py-2">
+              <span class="badge bg-info-subtle text-info p-2 fs-6"><i class="bi bi-gift-fill"></i></span>
+              <div>
+                <strong class="d-block text-dark">Festival & Birthday Sharing</strong>
+                <span class="text-muted small">Sharing clothes, sweets, and gifts with underprivileged communities.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Official Mission & Vision Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="text-center section-header mb-4">
+      <span class="section-subtitle-tag">{% if is_mr %}अधिकृत ध्येय आणि दृष्टीकोन{% else %}Guiding Purpose & Direction{% endif %}</span>
+      <h2 class="section-title">
+        {% if is_mr %}ध्येय आणि दृष्टीकोन (Mission & Vision){% else %}Our Mission & Vision{% endif %}
+      </h2>
+    </div>
+
+    <div class="row g-4">
+      <!-- Mission Card -->
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 h-100 rounded-4 border bg-white shadow-sm">
+          <div class="d-inline-flex align-items-center gap-2 p-2 px-3 bg-primary-subtle text-primary rounded-pill small fw-bold mb-3">
+            <i class="bi bi-flag-fill"></i>
+            {% if is_mr %}अधिकृत ध्येय{% else %}Official Mission{% endif %}
+          </div>
+          <h3 class="fw-bold mb-3 text-dark">
+            {% if is_mr %}आमचे ध्येय (Our Mission){% else %}Our Mission{% endif %}
+          </h3>
+          <div class="text-secondary mb-3" style="line-height: 1.8;">
+            {% if is_mr %}
+              <p class="lead text-dark fs-6">
+                समाजातील प्रत्येक गरजू घटकाकडे मदतीचा हात पुढे करणे आणि करुणा, दयाळूपणा तसेच निःस्वार्थ समर्पणाने मानवतेची सेवा करणे हे आमचे ध्येय आहे.
+              </p>
+              <ul class="list-unstyled small mb-0">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> अनाथालयातील बालकांना मदत, काळजी आणि आधार.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> वृद्धाश्रमातील ज्येष्ठ नागरिकांची सेवा.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> गोशाळांमधील मुक्या जनावरांना चारा व देखभाल.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> शासकीय रुग्णालयांतील गरजू रुग्णांना साहाय्य व रक्तदान.</li>
+              </ul>
+            {% else %}
+              <p class="lead text-dark fs-6">
+                Our mission is to extend a helping hand to every needy person in society and serve humanity with compassion, kindness, and selfless dedication.
+              </p>
+              <ul class="list-unstyled small mb-0">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Supporting orphanage children with care and essential assistance.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Serving senior citizens in old-age homes.</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Providing feed and care for animals in cow shelters (Gaushalas).</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Assisting patients in government hospitals and organizing blood donation.</li>
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Vision Card -->
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 h-100 rounded-4 border bg-white shadow-sm">
+          <div class="d-inline-flex align-items-center gap-2 p-2 px-3 bg-secondary-subtle text-secondary rounded-pill small fw-bold mb-3">
+            <i class="bi bi-eye-fill"></i>
+            {% if is_mr %}अधिकृत दृष्टीकोन{% else %}Official Vision{% endif %}
+          </div>
+          <h3 class="fw-bold mb-3 text-dark">
+            {% if is_mr %}आमचा दृष्टीकोन (Our Vision){% else %}Our Vision{% endif %}
+          </h3>
+          <div class="text-secondary mb-3" style="line-height: 1.8;">
+            {% if is_mr %}
+              <p class="lead text-dark fs-6">
+                एक दयाळू, संवेदनशील आणि भूकमुक्त समाज निर्माण करणे जिथे कोणीही उपाशी झोपणार नाही, प्रत्येकजण सन्मानाने जगेल आणि प्रत्येकाला उत्तम जीवन जगण्याची संधी लाभेल, हे आमचे स्वप्न आहे.
+              </p>
+              <p class="small text-muted mb-0">
+                अन्नदान, शिक्षण, आरोग्यसेवा, पर्यावरण संरक्षण आणि समाजकल्याण यांच्या माध्यमातून सकारात्मक प्रभाव निर्माण करण्याची आमची आकांक्षा आहे. आम्ही अशा समाजाची कल्पना करतो जिथे लोक एकमेकांना आधार देतील आणि सर्वांच्या उज्ज्वल भविष्यासाठी कार्य करतील.
+              </p>
+            {% else %}
+              <p class="lead text-dark fs-6">
+                Our vision is to build a compassionate and hunger-free society where no one sleeps hungry, everyone lives with dignity, and every individual has the opportunity to lead a better life.
+              </p>
+              <p class="small text-muted mb-0">
+                We aspire to create a positive impact through hunger relief, education, healthcare, environmental protection, and community welfare. We envision a society where people support one another, celebrate happiness together, and work towards a better future for all.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Impact Preview Section (Placed immediately after Mission & Vision) -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-subtitle-tag">
+          <i class="bi bi-patch-check-fill text-warning me-1"></i>
+          {% if is_mr %}प्रमाणित कार्य आणि प्रगती{% else %}Accountability & Transparency{% endif %}
+        </span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}आमचे कार्य व प्रभाव{% else %}Our Impact & Achievements{% endif %}
+        </h2>
+      </div>
+      <a href="{% url 'impact' %}" class="btn btn-outline-custom btn-sm mt-3 mt-md-0">
+        {% if is_mr %}संपूर्ण प्रभाव पहा{% else %}View Our Impact{% endif %} &rarr;
+      </a>
+    </div>
+
+    <!-- Years of Continuous Service Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-light mb-4 border-start border-4 border-primary">
+      <div class="row align-items-center g-3">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-primary text-white px-2 py-1 small">Established {{ foundation.established_date|default:"January 2024" }}</span>
+            <span class="text-muted small">&bull; Chhatrapati Sambhajinagar</span>
+          </div>
+          <h4 class="fw-bold text-dark mb-1">
+            {% if is_mr %}
+              स्वावलंबनातून समाजसेवा &ndash; अखंड सेवा वाटचाल
+            {% else %}
+              Years of Dedicated Grassroots Community Service
+            {% endif %}
+          </h4>
+          <p class="text-secondary small mb-0">
+            {% if is_mr %}
+              स्वयंसेवक फाउंडेशनची स्थापना जानेवारी २०२४ मध्ये झाली. दर रविवारी अन्नदान, हिवाळ्यात बेघरांना उबदार ब्लँकेट्स आणि रक्तदान शिबिरांच्या माध्यमातून निरंतर सेवाकार्य.
+            {% else %}
+              Founded in January 2024 by Om Vinod Dhadbale with the core belief that "Humanity is the greatest service". The foundation conducts regular Sunday food drives, blanket relief, and hospital support.
+            {% endif %}
+          </p>
+        </div>
+        <div class="col-md-4 text-md-end text-center">
+          <div class="display-4 fw-bold text-primary stat-counter" data-target="{{ years_of_service }}">{{ years_of_service }}+</div>
+          <div class="fw-bold text-dark small text-uppercase">
+            {% if is_mr %}वर्षे सातत्यपूर्ण सेवा{% else %}Years of Active Service{% endif %}
+          </div>
+          <div class="text-muted extra-small">2024 &ndash; {% now "Y" %}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Responsive Statistics Grid -->
+    {% if impact_stats %}
+    <div class="row g-4 mb-4">
+      {% for stat in impact_stats %}
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="card h-100 border shadow-sm rounded-4 p-4 bg-white hover-card transition">
+          <div class="service-icon-box mx-auto mb-2" style="width: 52px; height: 52px; font-size: 1.4rem;">
+            <i class="bi {{ stat.icon_bootstrap|default:'bi-heart-fill' }}"></i>
+          </div>
+          <div class="display-5 fw-bold text-primary mb-1 stat-counter" {% if stat.numeric_value %}data-target="{{ stat.numeric_value }}"{% endif %}>
+            {{ stat.display_value }}
+          </div>
+          <h5 class="fw-bold fs-6 text-dark mb-1">{% if is_mr %}{{ stat.title_mr }}{% else %}{{ stat.title }}{% endif %}</h5>
+          {% if stat.unit_label or stat.unit_label_mr %}
+          <div class="text-muted extra-small fw-semibold mb-2">
+            {% if is_mr and stat.unit_label_mr %}{{ stat.unit_label_mr }}{% else %}{{ stat.unit_label }}{% endif %}
+          </div>
+          {% endif %}
+          <p class="text-muted extra-small mb-0">{% if is_mr %}{{ stat.description_mr }}{% else %}{{ stat.description }}{% endif %}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white mx-auto mb-4" style="max-width: 760px;">
+      <i class="bi bi-shield-check text-success fs-2 mb-2 d-block"></i>
+      <h5 class="fw-bold mb-1">
+        {% if is_mr %}सेवा आकडेवारी अधिकृत संकलन चालू{% else %}Impact Records Under Official Compilation{% endif %}
+      </h5>
+      <p class="text-muted small mb-0" style="line-height: 1.7;">
+        {% if is_mr %}
+          स्वयंसेवक फाउंडेशन केवळ मूळ नोंदींवरून प्रमाणित आकडेवारी प्रसिद्ध करते. जानेवारी २०२४ मध्ये स्थापनेपासूनची अधिकृत आकडेवारी प्रशासकीय पडताळणी अंतर्गत आहे.
+        {% else %}
+          Swayamsevak Foundation publishes only verified impact metrics based on documented attendance and meal distribution logs. As our foundation was established in <strong>{{ foundation.established_date|default:"January 2024" }}</strong>, comprehensive annual impact data is currently being audited and compiled by authorized foundation administrators.
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- Preview of Achievements & Collaborations Highlights (if available) -->
+    {% if achievements_preview or collaborations_preview %}
+    <div class="row g-4 mt-1">
+      {% if achievements_preview %}
+      <div class="{% if collaborations_preview %}col-lg-6{% else %}col-12{% endif %}">
+        <div class="p-3 bg-light rounded-4 border h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h6 class="fw-bold text-dark mb-0">
+              <i class="bi bi-trophy text-warning me-2"></i>
+              {% if is_mr %}पुरस्कार व सन्मान{% else %}Verified Recognitions{% endif %}
+            </h6>
+            <a href="{% url 'impact' %}#achievements-section" class="extra-small fw-semibold text-primary text-decoration-none">
+              {% if is_mr %}सर्व पहा{% else %}View All{% endif %} &rarr;
+            </a>
+          </div>
+          <div class="list-group list-group-flush bg-transparent">
+            {% for ach in achievements_preview %}
+            <div class="list-group-item bg-transparent px-0 py-2 border-0 d-flex align-items-center justify-content-between">
+              <div>
+                <strong class="d-block small text-dark">{% if is_mr %}{{ ach.title_mr }}{% else %}{{ ach.title }}{% endif %}</strong>
+                <span class="text-muted extra-small">{{ ach.awarding_organization }} &bull; {{ ach.date_received|date:"M Y" }}</span>
+              </div>
+              <span class="badge bg-success-subtle text-success border border-success-subtle extra-small">
+                <i class="bi bi-check-circle-fill me-1"></i> Verified
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if collaborations_preview %}
+      <div class="{% if achievements_preview %}col-lg-6{% else %}col-12{% endif %}">
+        <div class="p-3 bg-light rounded-4 border h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h6 class="fw-bold text-dark mb-0">
+              <i class="bi bi-handshake text-primary me-2"></i>
+              {% if is_mr %}संस्थात्मक सहकार्य{% else %}Confirmed Collaborations{% endif %}
+            </h6>
+            <a href="{% url 'impact' %}#collaborations-section" class="extra-small fw-semibold text-primary text-decoration-none">
+              {% if is_mr %}सर्व पहा{% else %}View All{% endif %} &rarr;
+            </a>
+          </div>
+          <div class="list-group list-group-flush bg-transparent">
+            {% for col in collaborations_preview %}
+            <div class="list-group-item bg-transparent px-0 py-2 border-0 d-flex align-items-center justify-content-between">
+              <div>
+                <strong class="d-block small text-dark">{% if is_mr and col.organization_name_mr %}{{ col.organization_name_mr }}{% else %}{{ col.organization_name }}{% endif %}</strong>
+                <span class="text-muted extra-small">{% if is_mr and col.collaboration_purpose_mr %}{{ col.collaboration_purpose_mr|truncatewords:8 }}{% else %}{{ col.collaboration_purpose|truncatewords:8 }}{% endif %}</span>
+              </div>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle extra-small">
+                <i class="bi bi-patch-check-fill me-1"></i> Confirmed
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4 pt-2">
+      <a href="{% url 'impact' %}" class="btn btn-primary-custom px-4 py-2">
+        <i class="bi bi-graph-up-arrow me-1"></i>
+        {% if is_mr %}आमचे संपूर्ण कार्य, पुरस्कार व सहकार्य पहा{% else %}View Our Impact & Achievements{% endif %} &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 11 Activity Categories Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="text-center section-header mb-5">
+      <span class="section-subtitle-tag">Our 11 Avenues of Service</span>
+      <h2 class="section-title">
+        {% if is_mr %}आमचे ११ सेवा प्रवर्ग{% else %}11 Social Service Categories{% endif %}
+      </h2>
+      <p class="section-description mx-auto" style="max-width: 720px;">
+        {% if is_mr %}
+          स्वयंसेवक फाउंडेशनच्या सर्व सामाजिक उपक्रमांची ११ अधिकृत प्रवर्गांमध्ये विभागणी केली गेली आहे.
+        {% else %}
+          Every initiative organized by Swayamsevak Foundation is structured under these eleven dedicated operational categories.
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="row g-3">
+      {% for cat in activity_categories %}
+      <div class="col-lg-3 col-md-4 col-sm-6">
+        <a href="{% url 'activities' %}?category={{ cat.slug }}" class="text-decoration-none">
+          <div class="card h-100 border shadow-sm p-3 rounded-4 bg-white hover-card text-center transition">
+            <div class="service-icon-box mx-auto mb-2" style="width: 52px; height: 52px; font-size: 1.4rem;">
+              <i class="bi {{ cat.icon }}"></i>
+            </div>
+            <h5 class="fw-bold fs-6 mb-1 text-dark">
+              {% if is_mr %}{{ cat.name_mr }}{% else %}{{ cat.name }}{% endif %}
+            </h5>
+            <div class="text-muted extra-small">
+              {% if is_mr %}{{ cat.name }}{% else %}{{ cat.name_mr }}{% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4 pt-2">
+      <a href="{% url 'activities' %}" class="btn btn-outline-custom">
+        <i class="bi bi-grid-fill me-1"></i>
+        {% if is_mr %}सर्व उपक्रम प्रवर्गानुसार पहा{% else %}Browse All Activities By Category{% endif %}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Latest Published Activities Section -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-subtitle-tag">Community In Action</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}नियमित आणि चालू उपक्रम{% else %}Latest Published Activities{% endif %}
+        </h2>
+      </div>
+      <a href="{% url 'activities' %}" class="btn btn-outline-custom btn-sm mt-3 mt-md-0">
+        {% if is_mr %}सर्व उपक्रम पहा{% else %}View All Activities{% endif %} &rarr;
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for act in activities %}
+      <div class="col-lg-4 col-md-6">
+        <div class="activity-card h-100 d-flex flex-column">
+          {% if act.image %}
+            <img src="{{ act.image.url }}" class="img-fluid" alt="{{ act.title }}" style="height: 190px; object-fit: cover; width: 100%;">
+          {% else %}
+            <div class="p-4 bg-light text-center border-bottom d-flex flex-column align-items-center justify-content-center" style="height: 180px;">
+              <div class="fs-1 text-primary mb-2">
+                <i class="bi {% if act.category %}{{ act.category.icon }}{% else %}bi-heart-pulse-fill{% endif %}"></i>
+              </div>
+              <span class="badge bg-primary-subtle text-primary border">
+                {% if act.category %}
+                  {% if is_mr %}{{ act.category.name_mr }}{% else %}{{ act.category.name }}{% endif %}
+                {% else %}
+                  Swayamsevak Foundation
+                {% endif %}
+              </span>
+            </div>
+          {% endif %}
+
+          <div class="activity-card-body d-flex flex-column flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-status badge-status-{{ act.status }}">
+                {{ act.get_status_display }}
+              </span>
+              <span class="small text-muted fw-semibold">
+                <i class="bi bi-clock me-1"></i>
+                {% if is_mr %}{{ act.schedule_frequency_mr }}{% else %}{{ act.schedule_frequency }}{% endif %}
+              </span>
+            </div>
+
+            <h3 class="fs-5 fw-bold mb-2">
+              <a href="{% url 'activity_detail' act.slug %}" class="text-decoration-none text-dark hover-primary">
+                {% if is_mr %}{{ act.title_mr }}{% else %}{{ act.title }}{% endif %}
+              </a>
+            </h3>
+
+            <p class="text-secondary small flex-grow-1">
+              {% if is_mr %}{{ act.description_mr|truncatewords:22 }}{% else %}{{ act.description|truncatewords:22 }}{% endif %}
+            </p>
+
+            <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+              <a href="{% url 'activity_detail' act.slug %}" class="small fw-bold text-primary text-decoration-none">
+                Details &rarr;
+              </a>
+              <a href="{% url 'volunteer' %}" class="btn btn-sm btn-outline-custom">
+                Join Drive
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center text-muted py-4">
+        No activities currently listed.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Upcoming Events Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-subtitle-tag">Mark Your Calendar</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}आगामी कार्यक्रम आणि मोहीम{% else %}Upcoming Events & Programs{% endif %}
+        </h2>
+      </div>
+      <a href="{% url 'events' %}" class="btn btn-outline-custom btn-sm mt-3 mt-md-0">
+        {% if is_mr %}सर्व कार्यक्रम पहा{% else %}View All Events{% endif %} &rarr;
+      </a>
+    </div>
+
+    {% if upcoming_events %}
+    <div class="row g-4">
+      {% for ev in upcoming_events %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border shadow-sm rounded-4 bg-white p-3 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+              <i class="bi bi-calendar3 me-1"></i> {{ ev.event_date|date:"M d, Y" }}
+            </span>
+            {% if ev.can_register %}
+              <span class="badge bg-success">Registration Open</span>
+            {% else %}
+              <span class="badge bg-secondary">Upcoming</span>
+            {% endif %}
+          </div>
+          <h4 class="fs-6 fw-bold text-dark mb-2">
+            {% if is_mr %}{{ ev.title_mr }}{% else %}{{ ev.title }}{% endif %}
+          </h4>
+          <p class="text-secondary small flex-grow-1 mb-3">
+            {% if is_mr %}{{ ev.description_mr|truncatewords:18 }}{% else %}{{ ev.description|truncatewords:18 }}{% endif %}
+          </p>
+          <div class="small text-muted mb-3">
+            <div><i class="bi bi-clock me-1 text-primary"></i> {{ ev.start_time|time:"g:i A" }}</div>
+            <div><i class="bi bi-geo-alt me-1 text-danger"></i> {{ ev.venue|default:ev.location }}</div>
+          </div>
+          <div class="border-top pt-2">
+            {% if ev.can_register %}
+              <a href="{% url 'events' %}" class="btn btn-sm btn-primary-custom w-100">Register</a>
+            {% else %}
+              <a href="{% url 'events' %}" class="btn btn-sm btn-outline-secondary w-100">View Event Details</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm rounded-4 text-center py-4 bg-white">
+      <div class="card-body">
+        <i class="bi bi-calendar2-event text-muted fs-2 mb-2 d-block"></i>
+        <h5 class="fw-bold mb-1">No Public Events Scheduled At This Moment</h5>
+        <p class="text-muted small mb-3">Upcoming special camps and Sunday drives will be published here as soon as announced by administrators.</p>
+        <a href="{% url 'events' %}" class="btn btn-sm btn-outline-custom">Explore Events Archive</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Gallery Previews Section -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-subtitle-tag">Documented Service</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}गॅलरी झलक (अधिकृत नोंदी){% else %}Gallery Preview (Verified Records){% endif %}
+        </h2>
+      </div>
+      <a href="{% url 'gallery' %}" class="btn btn-outline-custom btn-sm mt-3 mt-md-0">
+        {% if is_mr %}संपूर्ण गॅलरी पहा{% else %}View Full Gallery{% endif %} &rarr;
+      </a>
+    </div>
+
+    {% if gallery_media %}
+    <div class="row g-4">
+      {% for item in gallery_media %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden bg-white">
+          {% if item.media_type == 'photo' and item.file %}
+            <img src="{{ item.file.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
+          {% elif item.media_type == 'video' and item.video_url %}
+            <div class="ratio ratio-16x9">
+              <iframe src="{{ item.video_url }}" title="{{ item.title }}" allowfullscreen></iframe>
+            </div>
+          {% endif %}
+          <div class="card-body p-3">
+            <h5 class="fw-bold mb-1 fs-6">
+              {% if is_mr %}{{ item.title_mr }}{% else %}{{ item.title }}{% endif %}
+            </h5>
+            {% if item.caption %}
+            <p class="text-muted small mb-0">{{ item.caption|truncatewords:15 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="p-4 bg-light rounded-4 border text-center">
+      <i class="bi bi-images text-muted fs-2 mb-2 d-block"></i>
+      <h5 class="fw-bold mb-1">Authentic Visual Documentation In Preparation</h5>
+      <p class="text-muted small mb-0" style="max-width: 650px; margin: 0 auto;">
+        In strict adherence to truthfulness, Swayamsevak Foundation exhibits only genuine ground photographs and videos captured during drives. Authentic records will appear here as uploaded by administrators.
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+
+<!-- Announcements & Stories Preview -->
+{% if recent_stories %}
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="section-subtitle-tag">Stories & Updates</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}ताज्या कथा आणि बातम्या{% else %}Recent Stories & Updates{% endif %}
+        </h2>
+      </div>
+      <a href="{% url 'announcements' %}" class="btn btn-outline-custom btn-sm mt-3 mt-md-0">
+        {% if is_mr %}सर्व कथा पहा{% else %}View All Stories{% endif %} &rarr;
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for story in recent_stories %}
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 border shadow-sm rounded-4 p-3 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-info-subtle text-info border">Story</span>
+            <span class="small text-muted">{{ story.created_at|date:"M d, Y" }}</span>
+          </div>
+          <h5 class="fw-bold fs-6 text-dark mb-2">
+            {% if is_mr and story.title_mr %}{{ story.title_mr }}{% else %}{{ story.title }}{% endif %}
+          </h5>
+          <p class="text-secondary small mb-3 flex-grow-1">
+            {% if is_mr and story.content_mr %}{{ story.content_mr|truncatewords:20 }}{% else %}{{ story.content|truncatewords:20 }}{% endif %}
+          </p>
+          <div class="border-top pt-2">
+            <a href="{% url 'announcements' %}" class="small text-primary fw-bold text-decoration-none">Read Full Story &rarr;</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Transparent Donation & Support Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="section-subtitle-tag">Direct Contribution</span>
+        <h2 class="section-title mb-3">
+          {% if is_mr %}सामाजिक कार्यात सहभागी व्हा व मदत करा{% else %}Support Our Social Initiatives{% endif %}
+        </h2>
+        <p class="text-secondary mb-4" style="line-height: 1.8;">
+          Your voluntary contributions directly support our Sunday food distribution drives, warm blankets for homeless individuals during winter, hospital patient care, and child welfare in orphanages.
+        </p>
+
+        <div class="p-3 bg-white rounded-3 border mb-3 small">
+          <i class="bi bi-info-circle text-primary me-2"></i>
+          <strong>Donation Transparency:</strong> Direct electronic payment gateway is in progress pending final institutional documentation. In-kind donations (groceries, blankets, stationery) are warmly welcomed.
+        </div>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'donate' %}" class="btn btn-primary-custom px-4 py-2">
+            <i class="bi bi-heart-fill me-1"></i>
+            {% if is_mr %}दान करा / मदत फॉर्म{% else %}Submit Support Pledge{% endif %}
+          </a>
+          <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-outline-secondary px-3 py-2">
+            <i class="bi bi-telephone-fill me-1"></i> Call: {{ foundation.phone|default:"9852827771" }}
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card border shadow-sm rounded-4 p-4 bg-white">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-geo-alt-fill text-danger"></i> Direct Contact & Headquarters
+          </h5>
+          <div class="small" style="line-height: 1.8;">
+            <div><strong class="text-dark">Founder & President:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+            <div><strong class="text-dark">Headquarters:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+            <div><strong class="text-dark">Mobile:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}">{{ foundation.phone|default:"9852827771" }}</a></div>
+            <div><strong class="text-dark">Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
+          </div>
+          <div class="border-top pt-3 mt-3">
+            <div class="small fw-bold text-muted mb-2">Connect on Social Channels:</div>
+            <div class="d-flex gap-2">
+              <a href="{{ foundation.instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-instagram"></i> Instagram
+              </a>
+              <a href="{{ foundation.youtube_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-youtube"></i> YouTube
+              </a>
+              <a href="{{ foundation.whatsapp_group_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-whatsapp"></i> WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5 bg-dark text-white text-center">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="display-6 fw-bold mb-3 text-white">
+          {% if is_mr %}
+            मानवतेच्या या कार्यात आमचे सोबती व्हा
+          {% else %}
+            Be Part of Our Mission to Serve Humanity
+          {% endif %}
+        </h2>
+        <p class="lead text-secondary mb-4">
+          Whether you want to join our team on Sunday food distribution drives, donate blankets for winter relief, or support child welfare, every caring gesture brings happiness to someone in need.
+        </p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+          <a href="{% url 'volunteer' %}" class="btn btn-primary-custom px-4 py-2">
+            <i class="bi bi-person-heart me-1"></i> Become a Volunteer
+          </a>
+          <a href="{% url 'donate' %}" class="btn btn-outline-light px-4 py-2">
+            <i class="bi bi-heart me-1"></i> Support Our Work
+          </a>
+          <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-secondary-custom px-4 py-2">
+            <i class="bi bi-telephone-fill me-1"></i> Call: {{ foundation.phone|default:"9852827771" }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Simple Number Animation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const counters = document.querySelectorAll('.stat-counter');
+  if (!counters.length) return;
+
+  const animateCounter = (el) => {
+    const target = parseInt(el.getAttribute('data-target'));
+    if (isNaN(target)) return;
+    let count = 0;
+    const speed = Math.max(10, Math.floor(target / 40));
+    const timer = setInterval(() => {
+      count += speed;
+      if (count >= target) {
+        el.innerText = target.toLocaleString() + '+';
+        clearInterval(timer);
+      } else {
+        el.innerText = count.toLocaleString() + '+';
+      }
+    }, 30);
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    counters.forEach(c => observer.observe(c));
+  }
+});
+</script>
+{% endblock %}

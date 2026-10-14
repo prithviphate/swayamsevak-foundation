@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Events & Programs - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2 text-center">
+    <span class="section-subtitle-tag">Community In Action</span>
+    <h1 class="display-5 fw-bold mb-3">
+      {% if is_mr %}कार्यक्रम आणि उपक्रम{% else %}Events & Programs{% endif %}
+    </h1>
+    <p class="lead text-secondary mx-auto" style="max-width: 740px;">
+      {% if is_mr %}
+        स्वयंसेवक फाउंडेशनचे अधिकृत सेवा उपक्रम, विशेष शिबिरे आणि मोहीम वेळापत्रक.
+      {% else %}
+        Official community drives, special health and blood donation camps, and seasonal relief programs in Chhatrapati Sambhajinagar.
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+<!-- Events Section -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+
+    <!-- Nav Tabs: Upcoming vs Past -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="eventsTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold px-4 py-2" id="upcoming-tab" data-bs-toggle="pill" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">
+          <i class="bi bi-calendar-event me-2"></i>
+          {% if is_mr %}आगामी कार्यक्रम{% else %}Upcoming Events{% endif %} ({{ upcoming_events.count }})
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold px-4 py-2" id="past-tab" data-bs-toggle="pill" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">
+          <i class="bi bi-clock-history me-2"></i>
+          {% if is_mr %}पूर्ण झालेले उपक्रम{% else %}Past Programs{% endif %} ({{ past_events.count }})
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="eventsTabContent">
+      <!-- UPCOMING EVENTS TAB -->
+      <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
+        {% if upcoming_events %}
+        <div class="row g-4">
+          {% for ev in upcoming_events %}
+          <div class="col-lg-6">
+            <div class="card h-100 border shadow-sm rounded-4 overflow-hidden bg-white">
+              <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fw-bold">
+                    <i class="bi bi-calendar-check me-1"></i> {{ ev.event_date|date:"l, M d, Y" }}
+                  </span>
+                  {% if ev.is_closed %}
+                    <span class="badge bg-secondary">Closed</span>
+                  {% elif ev.is_deadline_passed %}
+                    <span class="badge bg-warning text-dark">Deadline Passed</span>
+                  {% elif ev.is_full %}
+                    <span class="badge bg-danger">Capacity Full</span>
+                  {% elif ev.registration_enabled %}
+                    <span class="badge bg-success">Registration Open</span>
+                  {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary border">Notice Only</span>
+                  {% endif %}
+                </div>
+
+                <h3 class="fs-4 fw-bold text-dark mb-2">
+                  {% if is_mr %}{{ ev.title_mr }}{% else %}{{ ev.title }}{% endif %}
+                </h3>
+
+                <p class="text-secondary small mb-3 flex-grow-1" style="line-height: 1.7;">
+                  {% if is_mr %}{{ ev.description_mr }}{% else %}{{ ev.description }}{% endif %}
+                </p>
+
+                <div class="p-3 bg-light rounded-3 mb-3 border small">
+                  <div class="row g-2">
+                    <div class="col-sm-6">
+                      <i class="bi bi-clock text-primary me-1"></i>
+                      <strong>Time:</strong> {{ ev.start_time|time:"g:i A" }}{% if ev.end_time %} - {{ ev.end_time|time:"g:i A" }}{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                      <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                      <strong>Venue:</strong> {{ ev.venue|default:ev.location }}
+                    </div>
+                    {% if ev.registration_deadline %}
+                    <div class="col-12 text-muted">
+                      <i class="bi bi-alarm text-warning me-1"></i>
+                      <strong>Reg. Deadline:</strong> {{ ev.registration_deadline|date:"M d, Y g:i A" }}
+                    </div>
+                    {% endif %}
+                    {% if ev.max_volunteers %}
+                    <div class="col-12 text-muted">
+                      <i class="bi bi-people text-info me-1"></i>
+                      <strong>Volunteers:</strong> {{ ev.current_registered_count }} / {{ ev.max_volunteers }} registered
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                  {% if ev.activity %}
+                  <a href="{% url 'activity_detail' ev.activity.slug %}" class="small text-decoration-none text-muted">
+                    <i class="bi bi-arrow-left-short"></i> Related Activity
+                  </a>
+                  {% else %}
+                  <span></span>
+                  {% endif %}
+
+                  <div>
+                    {% if ev.id in user_registered_event_ids %}
+                      <span class="badge bg-success py-2 px-3">
+                        <i class="bi bi-check-circle-fill me-1"></i> You are Registered
+                      </span>
+                    {% elif ev.can_register %}
+                      {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'event_register' ev.id %}" class="d-inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-primary-custom px-3">
+                            <i class="bi bi-person-check me-1"></i> Register as Volunteer
+                          </button>
+                        </form>
+                      {% else %}
+                        <a href="{% url 'login' %}?next={% url 'events' %}" class="btn btn-sm btn-primary-custom px-3">
+                          <i class="bi bi-box-arrow-in-right me-1"></i> Login to Register
+                        </a>
+                      {% endif %}
+                    {% else %}
+                      <button class="btn btn-sm btn-outline-secondary" disabled>
+                        Registration Closed
+                      </button>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm rounded-4 text-center py-5 bg-white">
+          <div class="card-body py-4">
+            <div class="display-4 text-muted mb-3"><i class="bi bi-calendar-check"></i></div>
+            <h4 class="fw-bold mb-2">No Upcoming Events Scheduled Yet</h4>
+            <p class="text-secondary mx-auto mb-4" style="max-width: 600px;">
+              Swayamsevak Foundation regularly organizes Sunday food drives, blood donation camps, and community drives in Chhatrapati Sambhajinagar. Specific upcoming event schedules and registrations are announced and published here by foundation administrators.
+            </p>
+            <div class="d-flex justify-content-center gap-2">
+              <a href="{% url 'volunteer' %}" class="btn btn-primary-custom">
+                <i class="bi bi-person-heart me-1"></i> Register as General Volunteer
+              </a>
+              <a href="{% url 'activities' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-compass me-1"></i> Explore Regular Activities
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- PAST EVENTS TAB -->
+      <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
+        {% if past_events %}
+        <div class="row g-4">
+          {% for ev in past_events %}
+          <div class="col-lg-6">
+            <div class="card h-100 border shadow-sm rounded-4 bg-white">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge bg-secondary-subtle text-secondary border">
+                    <i class="bi bi-calendar2-check me-1"></i> Conducted on {{ ev.event_date|date:"M d, Y" }}
+                  </span>
+                  <span class="badge bg-light text-muted border">Completed</span>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">
+                  {% if is_mr %}{{ ev.title_mr }}{% else %}{{ ev.title }}{% endif %}
+                </h4>
+                <p class="text-secondary small mb-3">
+                  {% if is_mr %}{{ ev.description_mr }}{% else %}{{ ev.description }}{% endif %}
+                </p>
+                <div class="small text-muted border-top pt-2">
+                  <i class="bi bi-geo-alt-fill text-danger me-1"></i> Venue: {{ ev.venue|default:ev.location }}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm rounded-4 text-center py-5 bg-white">
+          <div class="card-body py-4">
+            <div class="display-4 text-muted mb-3"><i class="bi bi-clock-history"></i></div>
+            <h4 class="fw-bold mb-2">Past Event Records Archive</h4>
+            <p class="text-secondary mx-auto mb-0" style="max-width: 580px;">
+              Past completed program records and community activity reports will be archived here once documented by coordinators and approved by administrators.
+            </p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if is_mr %}आमचे कार्य व प्रभाव (Impact & Achievements){% else %}Our Impact & Achievements{% endif %} - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2 text-center">
+    <div class="d-inline-flex align-items-center gap-2 mb-2">
+      <span class="section-subtitle-tag mb-0">
+        <i class="bi bi-patch-check-fill text-warning me-1"></i>
+        {% if is_mr %}प्रमाणित समाजकार्य व उत्तरदायित्व{% else %}Verified Impact & Accountability{% endif %}
+      </span>
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 fw-bold">
+        {{ years_of_service }}+ {% if is_mr %}वर्षे अखंड सेवा{% else %}Years of Service{% endif %}
+      </span>
+    </div>
+
+    <h1 class="display-5 fw-bold mb-3 text-dark">
+      {% if is_mr %}
+        आमचे कार्य, प्रभाव आणि सन्मान
+      {% else %}
+        Our Impact, Achievements & Collaborations
+      {% endif %}
+    </h1>
+
+    <p class="lead text-secondary mx-auto mb-4" style="max-width: 780px; line-height: 1.8;">
+      {% if is_mr %}
+        जानेवारी २०२४ पासून छत्रपती संभाजीनगर येथे मानवता आणि स्वावलंबनाच्या मूल्यांवर आधारित प्रत्यक्ष समाजसेवा. आमचे प्रत्येक आकडे, पुरस्कार आणि सहकार्य अधिकृत नोंदींवरून प्रमाणित केले जाते.
+      {% else %}
+        Extending selfless service across Chhatrapati Sambhajinagar since January 2024. In strict accordance with our truthfulness policy, every statistic, award, and partnership shown here is verified from ground logs by foundation administrators.
+      {% endif %}
+    </p>
+
+    <!-- Quick Section Anchor Links -->
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <a href="#impact-metrics" class="btn btn-sm btn-outline-custom rounded-pill px-3">
+        <i class="bi bi-graph-up-arrow me-1"></i> {% if is_mr %}सेवा आकडेवारी{% else %}Impact Statistics{% endif %}
+      </a>
+      <a href="#achievements-section" class="btn btn-sm btn-outline-custom rounded-pill px-3">
+        <i class="bi bi-trophy me-1"></i> {% if is_mr %}पुरस्कार व सन्मान{% else %}Achievements & Awards{% endif %}
+      </a>
+      <a href="#collaborations-section" class="btn btn-sm btn-outline-custom rounded-pill px-3">
+        <i class="bi bi-handshake me-1"></i> {% if is_mr %}संस्थात्मक सहकार्य{% else %}Partnerships & Collaborations{% endif %}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1: IMPACT STATISTICS -->
+<section id="impact-metrics" class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 border-bottom pb-3">
+      <div>
+        <span class="section-subtitle-tag">Documented Ground Numbers</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}प्रमाणित सेवा आकडेवारी{% else %}Verified Impact Statistics{% endif %}
+        </h2>
+      </div>
+      <div class="text-muted small mt-2 mt-md-0">
+        <i class="bi bi-shield-check text-success me-1"></i>
+        {% if is_mr %}फक्त प्रशासकीय तपासणीनंतर मंजूर केलेली आकडेवारी{% else %}Only verified and administrator-approved metrics{% endif %}
+      </div>
+    </div>
+
+    <!-- Overview highlight card: Years of Service -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-4 border-primary">
+          <div class="row align-items-center g-3">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary text-white px-2 py-1 small">Established {{ foundation.established_date|default:"January 2024" }}</span>
+                <span class="text-muted small">&bull; Chhatrapati Sambhajinagar, Maharashtra</span>
+              </div>
+              <h4 class="fw-bold text-dark mb-1">
+                {% if is_mr %}
+                  स्वावलंबनातून समाजसेवा &ndash; अखंड वाटचाल
+                {% else %}
+                  Years of Continuous Grassroots Service in Maharashtra
+                {% endif %}
+              </h4>
+              <p class="text-secondary small mb-0" style="line-height: 1.7;">
+                {% if is_mr %}
+                  स्वयंसेवक फाउंडेशनची स्थापना जानेवारी २०२४ मध्ये झाली. दर रविवारी अन्नदान, हिवाळ्यात बेघरांना उबदार ब्लँकेट्स, अनाथालयातील बालकांना आधार, आणि रक्तदान शिबिरांच्या माध्यमातून निरंतर समाजकार्य सुरू आहे.
+                {% else %}
+                  Founded in January 2024 by Om Vinod Dhadbale with the core belief that "Humanity is the greatest service". The foundation conducts regular Sunday food drives, seasonal blanket relief, blood donation camps, and hospital assistance.
+                {% endif %}
+              </p>
+            </div>
+            <div class="col-md-4 text-md-end text-center">
+              <div class="display-3 fw-bold text-primary stat-counter" data-target="{{ years_of_service }}">{{ years_of_service }}+</div>
+              <div class="fw-bold text-dark small text-uppercase">
+                {% if is_mr %}वर्षे सातत्यपूर्ण सेवा{% else %}Years of Active Service{% endif %}
+              </div>
+              <div class="text-muted extra-small">2024 &ndash; {% now "Y" %}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if impact_stats %}
+    <!-- Metrics Grid -->
+    <div class="row g-4">
+      {% for stat in impact_stats %}
+      <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border shadow-sm rounded-4 p-4 bg-white text-center d-flex flex-column hover-card transition">
+          <div class="service-icon-box mx-auto mb-3" style="width: 58px; height: 58px; font-size: 1.6rem;">
+            <i class="bi {{ stat.icon_bootstrap|default:'bi-heart-fill' }}"></i>
+          </div>
+
+          <div class="display-5 fw-bold text-primary mb-1 stat-counter" 
+               {% if stat.numeric_value %}data-target="{{ stat.numeric_value }}"{% endif %}>
+            {{ stat.display_value }}
+          </div>
+
+          <h5 class="fw-bold fs-6 text-dark mb-1">
+            {% if is_mr %}{{ stat.title_mr }}{% else %}{{ stat.title }}{% endif %}
+          </h5>
+
+          {% if stat.unit_label or stat.unit_label_mr %}
+          <div class="text-muted small fw-semibold mb-2">
+            {% if is_mr and stat.unit_label_mr %}{{ stat.unit_label_mr }}{% else %}{{ stat.unit_label }}{% endif %}
+          </div>
+          {% endif %}
+
+          {% if stat.description or stat.description_mr %}
+          <p class="text-secondary extra-small mb-3 flex-grow-1" style="line-height: 1.6;">
+            {% if is_mr and stat.description_mr %}{{ stat.description_mr }}{% else %}{{ stat.description }}{% endif %}
+          </p>
+          {% endif %}
+
+          <div class="border-top pt-2 mt-auto d-flex justify-content-between align-items-center extra-small text-muted">
+            <span>
+              <i class="bi bi-calendar3 me-1"></i>
+              {{ stat.reporting_period|default:"Verified" }}
+            </span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">
+              <i class="bi bi-check-circle-fill me-1"></i> Verified
+            </span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Honest Empty State for Statistics -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center bg-white my-3">
+      <div class="card-body py-3">
+        <div class="fs-1 text-success mb-3"><i class="bi bi-shield-check"></i></div>
+        <h4 class="fw-bold mb-2">
+          {% if is_mr %}सेवा आकडेवारी प्रशासकीय तपासणी अंतर्गत{% else %}Official Impact Metrics Under Audit{% endif %}
+        </h4>
+        <p class="text-secondary mx-auto mb-4" style="max-width: 680px; line-height: 1.8;">
+          {% if is_mr %}
+            स्वयंसेवक फाउंडेशनच्या सत्यनिष्ठा धोरणानुसार, अंदाज किंवा काल्पनिक आकडे प्रदर्शित केले जात नाहीत. अन्नवाटप व स्वयंसेवक उपस्थितीच्या मूळ नोंदवह्या तपासून अधिकृत आकडेवारी येथे प्रकाशित केली जाते.
+          {% else %}
+            In strict compliance with Swayamsevak Foundation's zero-fabrication transparency rule, metrics are never estimated or assumed as zero. Figures are compiled from verified ground registers and published upon formal audit approval by administrators.
+          {% endif %}
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+          <a href="{% url 'activities' %}" class="btn btn-outline-custom btn-sm">
+            <i class="bi bi-compass me-1"></i> Explore Our Ongoing Drives
+          </a>
+          <a href="{% url 'volunteer' %}" class="btn btn-primary-custom btn-sm">
+            <i class="bi bi-person-heart me-1"></i> Join Our Sunday Drive
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- SECTION 2: ACHIEVEMENTS & RECOGNITIONS -->
+<section id="achievements-section" class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 border-bottom pb-3">
+      <div>
+        <span class="section-subtitle-tag">Milestones & Honors</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}पुरस्कार आणि सन्मान{% else %}Achievements & Recognitions{% endif %}
+        </h2>
+      </div>
+      <div class="text-muted small mt-2 mt-md-0">
+        <i class="bi bi-award-fill text-warning me-1"></i>
+        {% if is_mr %}अधिकृत संस्थांकडून मिळालेले गौरव{% else %}Conferred by recognized institutions{% endif %}
+      </div>
+    </div>
+
+    {% if achievements %}
+    <div class="row g-4">
+      {% for ach in achievements %}
+      <div class="col-lg-6">
+        <div class="card h-100 border shadow-sm rounded-4 overflow-hidden bg-white d-flex flex-column">
+          {% if ach.supporting_media and not ach.is_pdf %}
+            <div class="border-bottom text-center bg-light" style="max-height: 260px; overflow: hidden;">
+              <img src="{{ ach.supporting_media.url }}" alt="{{ ach.title }}" class="img-fluid w-100" style="object-fit: cover; max-height: 260px;">
+            </div>
+          {% endif %}
+
+          <div class="card-body p-4 d-flex flex-column flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1 fw-bold">
+                <i class="bi bi-trophy-fill me-1"></i>
+                {% if is_mr and ach.awarding_organization_mr %}{{ ach.awarding_organization_mr }}{% else %}{{ ach.awarding_organization }}{% endif %}
+              </span>
+              <span class="text-muted small">
+                <i class="bi bi-calendar-event me-1"></i> {{ ach.date_received|date:"M d, Y" }}
+              </span>
+            </div>
+
+            <h4 class="fw-bold text-dark fs-5 mb-2">
+              {% if is_mr and ach.title_mr %}{{ ach.title_mr }}{% else %}{{ ach.title }}{% endif %}
+            </h4>
+
+            <p class="text-secondary small mb-3 flex-grow-1" style="line-height: 1.7;">
+              {% if is_mr and ach.description_mr %}{{ ach.description_mr }}{% else %}{{ ach.description }}{% endif %}
+            </p>
+
+            <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-auto">
+              <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                <i class="bi bi-patch-check-fill me-1"></i> Verified Honor
+              </span>
+
+              {% if ach.supporting_media %}
+                <a href="{{ ach.supporting_media.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi {% if ach.is_pdf %}bi-file-earmark-pdf-fill text-danger{% else %}bi-image-fill text-primary{% endif %} me-1"></i>
+                  View Certificate
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Honest Empty State for Achievements -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center bg-light my-3">
+      <div class="card-body py-3">
+        <div class="display-4 text-muted mb-3"><i class="bi bi-trophy"></i></div>
+        <h4 class="fw-bold mb-2">
+          {% if is_mr %}अधिकृत सन्मान नोंदी पडताळणी अंतर्गत{% else %}Recognitions & Awards Archive{% endif %}
+        </h4>
+        <p class="text-secondary mx-auto mb-3" style="max-width: 640px; line-height: 1.7;">
+          {% if is_mr %}
+            स्वयंसेवक फाउंडेशनला विविध शासकीय, सामाजिक आणि वैद्यकीय संस्थांकडून मिळालेली अधिकृत प्रशस्तिपत्रके प्रशासकीय छाननीनंतर येथे प्रदर्शित केली जातात.
+          {% else %}
+            Swayamsevak Foundation archives citations and recognitions conferred by civic bodies, hospitals, and welfare forums. Validated certificates and citations will be published here upon administrative verification.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- SECTION 3: IMPORTANT COLLABORATIONS -->
+<section id="collaborations-section" class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 border-bottom pb-3">
+      <div>
+        <span class="section-subtitle-tag">Partners in Humanity</span>
+        <h2 class="section-title mb-0">
+          {% if is_mr %}महत्त्वाचे सहकार्य आणि संस्थात्मक भागीदारी{% else %}Important Collaborations & Partners{% endif %}
+        </h2>
+      </div>
+      <div class="text-muted small mt-2 mt-md-0">
+        <i class="bi bi-people-fill text-primary me-1"></i>
+        {% if is_mr %}केवळ अधिकृत पुष्टी असलेले भागीदार{% else %}Confirmed partner institutions{% endif %}
+      </div>
+    </div>
+
+    {% if collaborations %}
+    <div class="row g-4">
+      {% for col in collaborations %}
+      <div class="col-lg-6">
+        <div class="card h-100 border shadow-sm rounded-4 p-4 bg-white d-flex flex-column">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            {% if col.partner_logo %}
+              <img src="{{ col.partner_logo.url }}" alt="{{ col.organization_name }}" class="rounded-3 border p-1" style="width: 60px; height: 60px; object-fit: contain;">
+            {% else %}
+              <div class="service-icon-box" style="width: 54px; height: 54px; font-size: 1.5rem;">
+                <i class="bi bi-building"></i>
+              </div>
+            {% endif %}
+            <div class="flex-grow-1">
+              <h4 class="fw-bold text-dark fs-5 mb-1">
+                {% if is_mr and col.organization_name_mr %}{{ col.organization_name_mr }}{% else %}{{ col.organization_name }}{% endif %}
+              </h4>
+              <span class="badge bg-light text-muted border">
+                <i class="bi bi-clock-history me-1"></i> {{ col.collaboration_period }}
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <strong class="d-block small text-dark mb-1">
+              {% if is_mr %}सहकार्याचा मुख्य उद्देश:{% else %}Collaboration Purpose:{% endif %}
+            </strong>
+            <p class="text-secondary small mb-2" style="line-height: 1.6;">
+              {% if is_mr and col.collaboration_purpose_mr %}{{ col.collaboration_purpose_mr }}{% else %}{{ col.collaboration_purpose }}{% endif %}
+            </p>
+          </div>
+
+          {% if col.activities_conducted or col.activities_conducted_mr %}
+          <div class="mb-3 p-3 bg-light rounded-3 border small">
+            <strong class="d-block text-dark mb-1">
+              <i class="bi bi-check2-circle text-primary me-1"></i>
+              {% if is_mr %}संयुक्तपणे राबवलेले उपक्रम:{% else %}Joint Activities Conducted:{% endif %}
+            </strong>
+            <div class="text-secondary">
+              {% if is_mr and col.activities_conducted_mr %}{{ col.activities_conducted_mr }}{% else %}{{ col.activities_conducted }}{% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="pt-3 border-top mt-auto d-flex justify-content-between align-items-center">
+            <span class="badge bg-success-subtle text-success border border-success-subtle small">
+              <i class="bi bi-shield-check me-1"></i> Confirmed Partnership
+            </span>
+
+            {% if col.partner_website %}
+              <a href="{{ col.partner_website }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-custom">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Visit Website
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Honest Empty State for Collaborations -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center bg-white my-3">
+      <div class="card-body py-3">
+        <div class="display-4 text-muted mb-3"><i class="bi bi-people"></i></div>
+        <h4 class="fw-bold mb-2">
+          {% if is_mr %}संस्थात्मक भागीदारी दस्तऐवजीकरण प्रक्रिया सुरू{% else %}Institutional Collaborations In Formal Documentation{% endif %}
+        </h4>
+        <p class="text-secondary mx-auto mb-3" style="max-width: 660px; line-height: 1.8;">
+          {% if is_mr %}
+            स्वयंसेवक फाउंडेशन छत्रपती संभाजीनगरमधील शासकीय रुग्णालये, अनाथालये, वृद्धाश्रम आणि स्थानिक गोशाळांसोबत एकत्रितपणे सेवाकार्य करते. अधिकृत संस्थात्मक सामंजस्य करार पूर्ण झाल्यानंतर त्यांची माहिती येथे प्रदर्शित केली जाईल.
+          {% else %}
+            Swayamsevak Foundation collaborates on-ground with government hospitals, local orphanages, senior care homes, and animal shelters across Chhatrapati Sambhajinagar. Formal partnership agreements and joint drive records will be published here upon mutual confirmation.
+          {% endif %}
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+          <a href="{% url 'contact' %}" class="btn btn-outline-custom btn-sm">
+            <i class="bi bi-envelope me-1"></i> Propose a Community Collaboration
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5 bg-dark text-white text-center">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <span class="badge bg-warning text-dark px-3 py-2 mb-3 fw-bold">
+          {{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}
+        </span>
+        <h2 class="display-6 fw-bold mb-3 text-white">
+          {% if is_mr %}
+            मानवतेच्या या कार्यात हातभार लावा
+          {% else %}
+            Be Part of Our Mission to Serve Humanity
+          {% endif %}
+        </h2>
+        <p class="lead text-secondary mb-4">
+          Every meal served, blanket shared, and child supported is the result of dedicated volunteers and caring citizens. Join our team or support a Sunday food drive today.
+        </p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+          <a href="{% url 'volunteer' %}" class="btn btn-primary-custom px-4 py-2">
+            <i class="bi bi-person-heart me-1"></i> Become a Volunteer
+          </a>
+          <a href="{% url 'donate' %}" class="btn btn-outline-light px-4 py-2">
+            <i class="bi bi-heart me-1"></i> Support Our Work
+          </a>
+          <a href="{% url 'contact' %}" class="btn btn-secondary-custom px-4 py-2">
+            <i class="bi bi-telephone-fill me-1"></i> Contact Desk
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Simple Number Animation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const counters = document.querySelectorAll('.stat-counter');
+  if (!counters.length) return;
+
+  const animateCounter = (el) => {
+    const target = parseInt(el.getAttribute('data-target'));
+    if (isNaN(target)) return;
+    let count = 0;
+    const speed = Math.max(10, Math.floor(target / 40));
+    const timer = setInterval(() => {
+      count += speed;
+      if (count >= target) {
+        el.innerText = target.toLocaleString() + '+';
+        clearInterval(timer);
+      } else {
+        el.innerText = count.toLocaleString() + '+';
+      }
+    }, 30);
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    counters.forEach(c => observer.observe(c));
+  }
+});
+</script>
+{% endblock %}

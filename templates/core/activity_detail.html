@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if is_mr %}{{ activity.title_mr }}{% else %}{{ activity.title }}{% endif %} - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Activity Detail Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 small">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'activities' %}">Activities</a></li>
+          {% if activity.category %}
+          <li class="breadcrumb-item"><a href="{% url 'activities' %}?category={{ activity.category.slug }}">{% if is_mr %}{{ activity.category.name_mr }}{% else %}{{ activity.category.name }}{% endif %}</a></li>
+          {% endif %}
+          <li class="breadcrumb-item active" aria-current="page">{% if is_mr %}{{ activity.title_mr }}{% else %}{{ activity.title }}{% endif %}</li>
+        </ol>
+      </nav>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge badge-status badge-status-{{ activity.status }}">
+          {{ activity.get_status_display }}
+        </span>
+        {% if activity.category %}
+        <span class="badge bg-light text-dark border">
+          <i class="bi {{ activity.category.icon }} text-warning me-1"></i>
+          {% if is_mr %}{{ activity.category.name_mr }}{% else %}{{ activity.category.name }}{% endif %}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <h1 class="display-6 fw-bold mb-3 text-dark">
+          {% if is_mr %}
+            {{ activity.title_mr }}
+            <span class="d-block fs-4 text-muted fw-normal mt-1">{{ activity.title }}</span>
+          {% else %}
+            {{ activity.title }}
+            <span class="d-block fs-4 text-muted fw-normal mt-1">{{ activity.title_mr }}</span>
+          {% endif %}
+        </h1>
+        <p class="lead text-secondary mb-0">
+          {% if is_mr %}
+            {{ activity.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}
+          {% else %}
+            Official social welfare initiative by Swayamsevak Foundation, Chhatrapati Sambhajinagar.
+          {% endif %}
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="{% url 'volunteer' %}" class="btn btn-primary-custom px-4 py-2">
+          <i class="bi bi-person-heart me-1"></i>
+          {% if is_mr %}या उपक्रमात सहभागी व्हा{% else %}Volunteer for this Drive{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Activity Details Content -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row g-4">
+      <!-- Main Content -->
+      <div class="col-lg-8">
+        <!-- Media Showcase (Photo / Video) -->
+        <div class="bg-white rounded-4 border shadow-sm p-4 mb-4">
+          {% if activity.image %}
+            <div class="rounded-3 overflow-hidden mb-4 border">
+              <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="img-fluid w-100" style="max-height: 420px; object-fit: cover;">
+            </div>
+          {% endif %}
+
+          <h3 class="fw-bold mb-3 border-bottom pb-2">
+            {% if is_mr %}उपक्रमाची सविस्तर माहिती (About the Activity){% else %}About This Initiative{% endif %}
+          </h3>
+
+          <div class="content-text text-secondary mb-4" style="line-height: 1.8; font-size: 1.05rem;">
+            {% if is_mr %}
+              <div class="mb-3">{{ activity.description_mr|linebreaks }}</div>
+              <div class="p-3 bg-light rounded border text-muted small">
+                <strong>English Overview:</strong>
+                <div>{{ activity.description|linebreaks }}</div>
+              </div>
+            {% else %}
+              <div class="mb-3">{{ activity.description|linebreaks }}</div>
+              <div class="p-3 bg-light rounded border text-muted small">
+                <strong>मराठी सारांश:</strong>
+                <div>{{ activity.description_mr|linebreaks }}</div>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Video Embed if available -->
+          {% if activity.video_url %}
+          <div class="mt-4 pt-3 border-top">
+            <h5 class="fw-bold mb-3"><i class="bi bi-play-circle-fill text-danger me-2"></i>Video Documentation</h5>
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden border">
+              <iframe src="{{ activity.video_url }}" title="Activity Video" allowfullscreen></iframe>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Activity Gallery Media (Admin Verified) -->
+        <div class="bg-white rounded-4 border shadow-sm p-4 mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h4 class="fw-bold mb-0">
+              <i class="bi bi-images text-primary me-2"></i>
+              {% if is_mr %}छायाचित्रे व व्हिडीओ गॅलरी{% else %}Documented Media Records{% endif %}
+            </h4>
+            <span class="badge bg-light text-muted border">{{ media_items.count }} Records</span>
+          </div>
+
+          {% if media_items %}
+          <div class="row g-3">
+            {% for item in media_items %}
+            <div class="col-md-6">
+              <div class="card h-100 border">
+                {% if item.media_type == 'photo' and item.file %}
+                  <img src="{{ item.file.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 180px; object-fit: cover;">
+                {% elif item.media_type == 'video' and item.video_url %}
+                  <div class="ratio ratio-16x9">
+                    <iframe src="{{ item.video_url }}" title="{{ item.title }}" allowfullscreen></iframe>
+                  </div>
+                {% endif %}
+                <div class="card-body p-2">
+                  <h6 class="fw-bold mb-1 small">{% if is_mr %}{{ item.title_mr }}{% else %}{{ item.title }}{% endif %}</h6>
+                  {% if item.caption %}
+                  <p class="text-muted extra-small mb-0">{{ item.caption }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="p-4 bg-light rounded-3 text-center border">
+            <i class="bi bi-camera text-muted fs-2 mb-2 d-block"></i>
+            <p class="text-muted small mb-0">
+              Photographs and video documentation for this drive are currently being compiled and will be published by authorized foundation administrators.
+            </p>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Associated Upcoming Events -->
+        <div class="bg-white rounded-4 border shadow-sm p-4 mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <h4 class="fw-bold mb-0">
+              <i class="bi bi-calendar-event-fill text-warning me-2"></i>
+              {% if is_mr %}आगामी कार्यक्रम व शिबिरे{% else %}Scheduled Events & Drives{% endif %}
+            </h4>
+          </div>
+
+          {% if related_events %}
+          <div class="row g-3">
+            {% for event in related_events %}
+            <div class="col-12">
+              <div class="p-3 border rounded-3 bg-light d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div>
+                  <h5 class="fw-bold mb-1">{% if is_mr %}{{ event.title_mr }}{% else %}{{ event.title }}{% endif %}</h5>
+                  <div class="small text-muted">
+                    <span class="me-3"><i class="bi bi-calendar-check text-primary me-1"></i>{{ event.event_date|date:"F d, Y" }}</span>
+                    <span class="me-3"><i class="bi bi-clock text-secondary me-1"></i>{{ event.start_time|time:"g:i A" }}</span>
+                    <span><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ event.venue|default:event.location }}</span>
+                  </div>
+                </div>
+                <div>
+                  {% if event.can_register %}
+                    <a href="{% url 'event_register' event.id %}" class="btn btn-sm btn-primary-custom">Register to Volunteer</a>
+                  {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary border">Registrations Not Open</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="p-4 bg-light rounded-3 text-center border">
+            <i class="bi bi-calendar-x text-muted fs-2 mb-2 d-block"></i>
+            <p class="text-muted small mb-0">
+              No upcoming scheduled dates currently posted for this specific activity. New event dates will be announced by administrators.
+            </p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <!-- Quick Information Card -->
+        <div class="card border shadow-sm rounded-4 mb-4">
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="fw-bold mb-0 text-dark">
+              <i class="bi bi-info-circle-fill text-primary me-2"></i>Quick Overview
+            </h5>
+          </div>
+          <div class="card-body p-3">
+            <ul class="list-unstyled mb-0 small" style="line-height: 2;">
+              {% if activity.category %}
+              <li class="border-bottom py-2 d-flex justify-content-between">
+                <span class="text-muted">Category:</span>
+                <span class="fw-bold text-dark">{% if is_mr %}{{ activity.category.name_mr }}{% else %}{{ activity.category.name }}{% endif %}</span>
+              </li>
+              {% endif %}
+              <li class="border-bottom py-2 d-flex justify-content-between">
+                <span class="text-muted">Schedule:</span>
+                <span class="fw-bold text-dark">{% if is_mr %}{{ activity.schedule_frequency_mr }}{% else %}{{ activity.schedule_frequency }}{% endif %}</span>
+              </li>
+              {% if activity.venue %}
+              <li class="border-bottom py-2 d-flex justify-content-between">
+                <span class="text-muted">Venue / Area:</span>
+                <span class="fw-bold text-dark">{{ activity.venue }}</span>
+              </li>
+              {% endif %}
+              <li class="border-bottom py-2 d-flex justify-content-between">
+                <span class="text-muted">Operational City:</span>
+                <span class="fw-bold text-dark">{{ foundation.city|default:"Chhatrapati Sambhajinagar" }}</span>
+              </li>
+              <li class="py-2 d-flex justify-content-between">
+                <span class="text-muted">Status:</span>
+                <span class="badge bg-success-subtle text-success border">{{ activity.get_status_display }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Coordinator Contact / Direct Help -->
+        <div class="card border shadow-sm rounded-4 mb-4 bg-light">
+          <div class="card-body p-4 text-center">
+            <div class="badge bg-warning-subtle text-warning-emphasis px-3 py-2 mb-2">
+              <i class="bi bi-telephone-fill me-1"></i> Foundation Helpdesk
+            </div>
+            <h5 class="fw-bold mb-2">Have Questions About This Drive?</h5>
+            <p class="text-muted small mb-3">
+              Reach out directly to foundation management for participation details, food donation drop-offs, or volunteer coordinates.
+            </p>
+            <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-outline-custom w-100 mb-2">
+              <i class="bi bi-telephone me-1"></i> Call: {{ foundation.phone|default:"9852827771" }}
+            </a>
+            <a href="{% url 'contact' %}" class="btn btn-outline-secondary w-100">
+              <i class="bi bi-envelope me-1"></i> Send Online Enquiry
+            </a>
+          </div>
+        </div>
+
+        <!-- Related Activities in Same Category -->
+        {% if related_activities %}
+        <div class="card border shadow-sm rounded-4">
+          <div class="card-header bg-white border-bottom py-3">
+            <h5 class="fw-bold mb-0">Related Activities</h5>
+          </div>
+          <div class="card-body p-3">
+            <div class="list-group list-group-flush">
+              {% for rel in related_activities %}
+              <a href="{% url 'activity_detail' rel.slug %}" class="list-group-item list-group-item-action px-0 py-2 border-0">
+                <div class="fw-bold text-primary small">{% if is_mr %}{{ rel.title_mr }}{% else %}{{ rel.title }}{% endif %}</div>
+                <div class="text-muted extra-small">{% if is_mr %}{{ rel.schedule_frequency_mr }}{% else %}{{ rel.schedule_frequency }}{% endif %}</div>
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

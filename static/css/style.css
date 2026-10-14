@@ -1,0 +1,692 @@
+/* ==========================================================================
+   Swayamsevak Foundation - Premium Social Service Stylesheet
+   Design Philosophy: Warm, restrained, compassionate, and accessible.
+   ========================================================================== */
+
+:root {
+  /* Brand Color Palette */
+  --color-primary: #b84a1a;          /* Warm Terracotta / Compassion Ochre */
+  --color-primary-hover: #9c3c13;
+  --color-primary-light: #fff2eb;
+  --color-secondary: #1e4d2b;        /* Forest Sage / Growth & Service */
+  --color-secondary-hover: #163b21;
+  --color-secondary-light: #eef7f0;
+  --color-accent: #d97706;           /* Warm Golden Sun / Hope */
+  --color-dark: #1e242b;             /* Charcoal for crisp typography */
+  --color-muted: #5c6875;            /* Slate muted text */
+  --color-light-bg: #fdfbf7;         /* Warm Ivory Base */
+  --color-card-bg: #ffffff;
+  --color-border: #ebdcd0;
+  --color-border-subtle: #f1e7df;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-marathi: 'Noto Sans Devanagari', 'Inter', sans-serif;
+  --font-heading: 'Outfit', var(--font-sans);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(30, 36, 43, 0.04);
+  --shadow-md: 0 6px 20px rgba(30, 36, 43, 0.06);
+  --shadow-lg: 0 12px 32px rgba(30, 36, 43, 0.08);
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+/* Global Reset & Base Typography */
+body {
+  font-family: var(--font-sans);
+  color: var(--color-dark);
+  background-color: var(--color-light-bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.lang-mr {
+  font-family: var(--font-marathi);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-dark);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+body.lang-mr h1,
+body.lang-mr h2,
+body.lang-mr h3,
+body.lang-mr h4,
+body.lang-mr h5,
+body.lang-mr h6 {
+  font-family: var(--font-marathi);
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+
+/* Top Info Bar */
+.top-bar {
+  background-color: #212932;
+  color: #d1d8df;
+  font-size: 0.825rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.top-bar a {
+  color: #e2e8f0;
+}
+
+.top-bar a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.top-bar .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  margin-left: 0.35rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.top-bar .social-icons a:hover {
+  background: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.775rem;
+  color: #fff !important;
+}
+
+.lang-btn.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Main Navbar */
+.navbar-custom {
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  padding: 0.75rem 0;
+  border-bottom: 2px solid var(--color-border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.navbar-brand .brand-logo-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(184, 74, 26, 0.25);
+  box-shadow: 0 2px 8px rgba(184, 74, 26, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background-color: #fff;
+  flex-shrink: 0;
+}
+
+.navbar-brand:hover .brand-logo-img {
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 4px 12px rgba(184, 74, 26, 0.28);
+}
+
+.footer-logo-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.navbar-brand .brand-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #a2380f 100%);
+  color: #ffffff;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 10px rgba(184, 74, 26, 0.25);
+}
+
+.navbar-brand .brand-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--color-dark);
+  line-height: 1.15;
+}
+
+.navbar-brand .brand-tagline {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.navbar-nav .nav-link {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #334155;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* Primary and Outline Buttons */
+.btn-primary-custom {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 2px 6px rgba(184, 74, 26, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(184, 74, 26, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-outline-custom {
+  background-color: transparent;
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-primary);
+  transition: all 0.2s ease;
+}
+
+.btn-outline-custom:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-secondary-custom {
+  background-color: var(--color-secondary);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-secondary);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-custom:hover {
+  background-color: var(--color-secondary-hover);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, #fdfbf7 0%, #faede2 100%);
+  border-bottom: 1px solid var(--color-border);
+  padding: 4.5rem 0 4rem;
+  overflow: hidden;
+}
+
+/* Foundation Watermark Background Effects */
+.hero-watermark::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 520px;
+  height: 520px;
+  background-image: url('../images/watermark.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+  opacity: 0.12;
+  z-index: 1;
+}
+
+@media (max-width: 991.98px) {
+  .hero-watermark::after {
+    width: 340px;
+    height: 340px;
+    right: -40px;
+    opacity: 0.08;
+  }
+}
+
+.watermark-container::before {
+  content: "";
+  position: absolute;
+  right: -40px;
+  bottom: -40px;
+  width: 280px;
+  height: 280px;
+  background-image: url('../images/watermark.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+  opacity: 0.09;
+  z-index: 0;
+}
+
+.watermark-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  border-radius: 50px;
+  border: 1px solid rgba(184, 74, 26, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.watermark-stamp img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid rgba(184, 74, 26, 0.2);
+  padding: 0.35rem 0.9rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.hero-title {
+  font-size: 2.85rem;
+  font-weight: 800;
+  color: var(--color-dark);
+  line-height: 1.18;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 620px;
+}
+
+.hero-card-preview {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.hero-card-preview .quote-tag {
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Cards & Content Blocks
+   ========================================================================== */
+.service-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.service-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.activity-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.activity-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.activity-card-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Photo Placeholder */
+.photo-placeholder {
+  background: linear-gradient(135deg, #f1ede8 0%, #e8e0d6 100%);
+  border: 2px dashed #cfc2b5;
+  border-radius: var(--radius-sm);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.photo-placeholder i {
+  font-size: 2.25rem;
+  color: #9c8e80;
+  margin-bottom: 0.5rem;
+}
+
+.photo-placeholder .placeholder-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #554a40;
+  letter-spacing: 0.01em;
+}
+
+.photo-placeholder .placeholder-note {
+  font-size: 0.75rem;
+  color: #7d7065;
+  margin-top: 0.25rem;
+}
+
+/* Belief Banner */
+.belief-banner {
+  background: linear-gradient(135deg, #1e4d2b 0%, #153820 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  position: relative;
+}
+
+.belief-banner h2 {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.belief-badge {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+/* Info Cards */
+.info-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.info-label {
+  font-size: 0.775rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+/* ==========================================================================
+   Forms & Controls
+   ========================================================================== */
+.form-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #27313b;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.form-control, .form-select {
+  border: 1.5px solid #d8cbbf;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.95rem;
+  font-size: 0.95rem;
+  color: var(--color-dark);
+  background-color: #faf8f5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(184, 74, 26, 0.15);
+}
+
+/* Section Header standard */
+.section-header {
+  margin-bottom: 2.75rem;
+}
+
+.section-subtitle-tag {
+  color: var(--color-primary);
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-dark);
+  line-height: 1.2;
+}
+
+.section-description {
+  font-size: 1.05rem;
+  color: #556270;
+  max-width: 700px;
+  margin: 0.75rem auto 0;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.footer-custom {
+  background-color: #171d24;
+  color: #a0aec0;
+  padding: 4rem 0 1.5rem;
+  border-top: 4px solid var(--color-primary);
+  font-size: 0.92rem;
+}
+
+.footer-custom h5 {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.footer-custom a {
+  color: #cbd5e0;
+}
+
+.footer-custom a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.65rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  font-size: 0.825rem;
+  color: #718096;
+}
+
+/* Status Badges */
+.badge-status {
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-status-regular {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+
+.badge-status-seasonal {
+  background-color: #fff4e5;
+  color: #b45309;
+}
+
+.badge-status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Transparent Note Box */
+.notice-box {
+  background-color: #f8fafc;
+  border-left: 4px solid #3b82f6;
+  border-radius: 4px;
+  padding: 1.25rem;
+}
+
+.notice-box-warning {
+  background-color: #fffbeb;
+  border-left-color: #f59e0b;
+}
+
+.notice-box-success {
+  background-color: #f0fdf4;
+  border-left-color: #22c55e;
+}

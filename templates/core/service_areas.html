@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Key Areas of Service (7 Pillars) - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2 text-center">
+    <span class="section-subtitle-tag">Our Dedicated Pillars</span>
+    <h1 class="display-5 fw-bold mb-3">The 7 Key Areas of Service</h1>
+    <p class="lead text-secondary mx-auto" style="max-width: 760px;">
+      As declared in the official Swayamsevak Foundation mission, our volunteers actively focus on these seven service domains to extend a helping hand across society.
+    </p>
+  </div>
+</section>
+
+<!-- Service Areas Grid -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+    <div class="row g-4">
+      {% for area in service_areas %}
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 bg-white rounded-4 border shadow-sm h-100 d-flex flex-column">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="service-icon-box mb-0">
+              <i class="bi {{ area.icon_bootstrap }}"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1">
+              Pillar #0{{ area.order }}
+            </span>
+          </div>
+
+          <h2 class="fs-4 fw-bold mb-2 text-dark">
+            {% if is_mr %}{{ area.title_mr }}{% else %}{{ area.title }}{% endif %}
+          </h2>
+
+          <p class="text-secondary mb-4 flex-grow-1" style="line-height: 1.7;">
+            {% if is_mr %}{{ area.short_description_mr }}{% else %}{{ area.short_description }}{% endif %}
+          </p>
+
+          <div class="p-3 bg-light rounded-3 border d-flex flex-wrap justify-content-between align-items-center gap-2 mt-auto">
+            <span class="small text-muted">
+              <i class="bi bi-geo-alt-fill text-danger me-1"></i> Chhatrapati Sambhajinagar
+            </span>
+            <div class="d-flex gap-2">
+              <a href="{% url 'activities' %}?area={{ area.slug }}" class="btn btn-sm btn-outline-custom">
+                {% if is_mr %}उपक्रम पहा{% else %}View Drives{% endif %}
+              </a>
+              <a href="{% url 'volunteer' %}" class="btn btn-sm btn-primary-custom">
+                {% if is_mr %}सहभागी व्हा{% else %}Volunteer Here{% endif %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Official Belief Note -->
+    <div class="mt-5 text-center p-4 bg-white rounded-4 border shadow-sm">
+      <div class="fs-5 fw-bold text-dark mb-1">
+        {% if is_mr %}
+          "{{ foundation.belief_mr|default:'मानवता हीच खरी सेवा आहे.' }}"
+        {% else %}
+          "{{ foundation.belief|default:'Humanity is the greatest service.' }}"
+        {% endif %}
+      </div>
+      <p class="text-muted small mb-3">
+        Interested in joining our team or supporting one of these key areas?
+      </p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'volunteer' %}" class="btn btn-primary-custom">
+          <i class="bi bi-person-heart me-1"></i> Become a Volunteer
+        </a>
+        <a href="{% url 'support' %}" class="btn btn-outline-custom">
+          <i class="bi bi-heart-fill me-1"></i> Support Our Work
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

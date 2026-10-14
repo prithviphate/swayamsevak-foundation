@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Support Our Work - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container py-2">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="section-subtitle-tag">Partners in Humanity</span>
+        <h1 class="display-5 fw-bold mb-3">
+          {% if is_mr %}आमच्या सामाजिक कार्यास हातभार लावा{% else %}Support Our Work{% endif %}
+        </h1>
+        <p class="lead text-secondary mb-0">
+          Your care and contribution directly empower Sunday food distribution drives, warm blankets for homeless individuals, and support for orphanages and senior citizens.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-primary-custom">
+          <i class="bi bi-telephone-fill me-1"></i> Call Founder: {{ foundation.phone|default:"9852827771" }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Content & Support Pledge Form -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-3">
+
+    <!-- Transparent Compliance & Integration Status Notice -->
+    <div class="p-4 bg-white rounded-4 border shadow-sm mb-5 border-start border-4 border-warning">
+      <div class="d-flex align-items-start gap-3">
+        <i class="bi bi-shield-exclamation text-warning fs-2 flex-shrink-0"></i>
+        <div>
+          <h4 class="fw-bold mb-2 text-dark">Contribution Transparency & Payment Gateway Notice</h4>
+          <p class="text-secondary mb-2" style="line-height: 1.7;">
+            {% if is_mr %}
+              {{ foundation.support_note_mr }}
+            {% else %}
+              {{ foundation.support_note }}
+            {% endif %}
+          </p>
+          <div class="small text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            <strong>Integration Status:</strong> Direct electronic payment gateway (Cards/UPI) is currently in preparation pending official NGO institutional banking documentation verification. We encourage supporters to provide in-kind donations (groceries, blankets, clothes, stationeries) or coordinate directly with foundation leadership.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5">
+      <!-- Form Column -->
+      <div class="col-lg-7">
+        <div class="form-card">
+          <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+            <div>
+              <h3 class="fw-bold mb-1">Support Pledge / Inquiry Form</h3>
+              <p class="text-muted small mb-0">Submit how you wish to contribute, and our team will get in touch with you.</p>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+              Transparent & Verified
+            </span>
+          </div>
+
+          <form method="post" action="{% url 'support' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Supporter Name -->
+            <div class="mb-3">
+              <label for="{{ form.supporter_name.id_for_label }}" class="form-label">
+                Your Full Name / Organization <span class="text-danger">*</span>
+              </label>
+              {{ form.supporter_name }}
+              {% if form.supporter_name.errors %}
+                <div class="text-danger small mt-1">{{ form.supporter_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Phone & Email -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">
+                  Mobile Number <span class="text-danger">*</span>
+                </label>
+                {{ form.phone }}
+                <div class="form-text small">10-digit Indian number (e.g. 9852827771)</div>
+                {% if form.phone.errors %}
+                  <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">
+                  Email Address
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- City -->
+            <div class="mb-3">
+              <label for="{{ form.city.id_for_label }}" class="form-label">
+                Your City / Location <span class="text-danger">*</span>
+              </label>
+              {{ form.city }}
+              {% if form.city.errors %}
+                <div class="text-danger small mt-1">{{ form.city.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Support Type & Preferred Mode -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.support_type.id_for_label }}" class="form-label">
+                  Area You Wish to Support <span class="text-danger">*</span>
+                </label>
+                {{ form.support_type }}
+                {% if form.support_type.errors %}
+                  <div class="text-danger small mt-1">{{ form.support_type.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.preferred_mode.id_for_label }}" class="form-label">
+                  Preferred Contribution Mode <span class="text-danger">*</span>
+                </label>
+                {{ form.preferred_mode }}
+                {% if form.preferred_mode.errors %}
+                  <div class="text-danger small mt-1">{{ form.preferred_mode.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Message / Details -->
+            <div class="mb-4">
+              <label for="{{ form.message.id_for_label }}" class="form-label">
+                Contribution Details & Message <span class="text-danger">*</span>
+              </label>
+              {{ form.message }}
+              {% if form.message.errors %}
+                <div class="text-danger small mt-1">{{ form.message.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-6">
+              <i class="bi bi-hand-thumbs-up-fill me-2"></i> Submit Support Pledge
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Ways to Support Sidebar -->
+      <div class="col-lg-5">
+        <div class="p-4 bg-white rounded-4 border shadow-sm mb-4">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-gift-fill text-primary"></i> Practical Ways to Help
+          </h4>
+          <ul class="list-unstyled mb-0" style="line-height: 1.8;">
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-bag-check-fill text-success fs-5"></i>
+              <div>
+                <strong>In-Kind Raw Groceries & Food:</strong>
+                <p class="text-muted small mb-0">Rice, wheat flour, lentils, cooking oil, spices, or packed nutritious biscuits for Sunday meals.</p>
+              </div>
+            </li>
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-snow text-primary fs-5"></i>
+              <div>
+                <strong>Warm Blankets for Winter:</strong>
+                <p class="text-muted small mb-0">Contribute good quality blankets distributed directly to street-sleeping individuals across the city.</p>
+              </div>
+            </li>
+            <li class="mb-3 d-flex align-items-start gap-2">
+              <i class="bi bi-book-fill text-warning fs-5"></i>
+              <div>
+                <strong>Educational Supplies:</strong>
+                <p class="text-muted small mb-0">Notebooks, pens, school bags, and study kits for children in orphanages.</p>
+              </div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-people-fill text-info fs-5"></i>
+              <div>
+                <strong>Sponsor an Occasion:</strong>
+                <p class="text-muted small mb-0">Celebrate your birthday, anniversary, or milestone by sponsoring meals or sweets for needy children and elders.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h5 class="fw-bold mb-3">Direct Coordination Contact</h5>
+          <p class="text-muted small mb-3">
+            For on-site delivery of goods or immediate coordination:
+          </p>
+          <div class="small">
+            <div class="mb-2"><strong class="text-dark">Founder & President:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
+            <div class="mb-2"><strong class="text-dark">Official Phone:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="fw-bold text-primary">{{ foundation.phone|default:"9852827771" }}</a></div>
+            <div class="mb-2"><strong class="text-dark">Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
+            <div><strong class="text-dark">Location:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

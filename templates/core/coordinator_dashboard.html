@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Coordinator Dashboard - {{ foundation.name|default:"Swayamsevak Foundation" }}
+{% endblock %}
+
+{% block content %}
+<!-- Top Header -->
+<section class="py-4 bg-white border-bottom">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="rounded-circle border border-2 border-primary" width="54" height="54" style="object-fit: cover;">
+        <div>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-1">
+            <i class="bi bi-person-gear me-1"></i> Field Leadership Portal
+          </span>
+          <h1 class="h3 fw-bold mb-0 text-dark">Coordinator Operations Dashboard</h1>
+          <small class="text-secondary">Welcome, {{ user.get_full_name|default:user.username }}! Manage your assigned drives, volunteer rosters, attendance, and field reports</small>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-person-vcard me-1"></i> My Profile
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard Content -->
+<section class="py-5" style="background-color: #fdfbf7;">
+  <div class="container py-2">
+
+    <!-- Assigned Activities Overview -->
+    <div class="card border shadow-sm rounded-4 bg-white p-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h5 class="fw-bold mb-1 text-dark">
+            <i class="bi bi-award-fill text-primary me-2"></i> My Assigned Activity Domains
+          </h5>
+          <p class="text-muted small mb-0">You hold operational authority to coordinate the following foundation domains:</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for act in profile.assigned_activities.all %}
+            <span class="badge bg-primary px-3 py-2 fs-6">
+              <i class="bi bi-check2-circle me-1"></i> {{ act.title }}
+            </span>
+          {% empty %}
+            <span class="badge bg-secondary-subtle text-secondary px-3 py-2">Events Assigned Directly</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Announcements -->
+    {% if announcements %}
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-broadcast text-danger me-2"></i> Coordinator Operational Notices
+        </h5>
+      </div>
+      <div class="p-3">
+        {% for ann in announcements %}
+        <div class="p-3 bg-light rounded-3 border mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h6 class="fw-bold mb-0">{{ ann.title }}</h6>
+            <span class="badge bg-secondary text-white small">{{ ann.created_at|date:"d M Y" }}</span>
+          </div>
+          <p class="mb-0 small text-secondary">{{ ann.content }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Assigned Upcoming Drives & Volunteer Rosters -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-calendar-check-fill text-success me-2"></i> My Assigned Drives & Volunteer Rosters
+          </h5>
+          <small class="text-muted">Directly manage volunteer teams, mark attendance, and submit verified reports</small>
+        </div>
+        <span class="badge bg-success">{{ assigned_events.count }} Drives</span>
+      </div>
+      <div class="p-3">
+        {% for evt in assigned_events %}
+        <div class="p-4 bg-light rounded-3 border mb-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+            <div>
+              <span class="badge bg-{% if evt.status == 'upcoming' %}success{% elif evt.status == 'completed' %}secondary{% else %}info{% endif %} mb-1">
+                {{ evt.get_status_display }}
+              </span>
+              <h4 class="fw-bold text-dark mb-1">{{ evt.title }}</h4>
+              <div class="small text-muted">
+                <i class="bi bi-calendar3 me-1"></i> {{ evt.event_date|date:"D, d M Y" }} &bull;
+                <i class="bi bi-clock me-1"></i> {{ evt.start_time|time:"H:i" }} &bull;
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ evt.location }}
+              </div>
+            </div>
+
+            <!-- Action Buttons for this event -->
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{% url 'coordinator_attendance' evt.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-card-checklist me-1"></i> Record Attendance
+              </a>
+              <a href="{% url 'coordinator_submit_report' evt.id %}" class="btn btn-sm btn-primary-custom">
+                <i class="bi bi-file-earmark-arrow-up me-1"></i> Submit Activity Report
+              </a>
+            </div>
+          </div>
+
+          <!-- Registered Volunteer Roster Preview -->
+          <div class="border-top pt-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="fw-bold mb-0 text-dark small text-uppercase">
+                <i class="bi bi-people-fill text-primary me-1"></i> Registered Volunteer Team ({{ evt.registered_count }} / {{ evt.max_volunteers }})
+              </h6>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered bg-white align-middle mb-0 small">
+                <thead class="table-light">
+                  <tr>
+                    <th>Volunteer Name</th>
+                    <th>Mobile Contact</th>
+                    <th>City / Locality</th>
+                    <th>Blood Group</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for reg in evt.registrations.all %}
+                  <tr>
+                    <td>
+                      <span class="fw-bold">{{ reg.volunteer.get_full_name|default:reg.volunteer.username }}</span>
+                      <small class="text-muted d-block">@{{ reg.volunteer.username }}</small>
+                    </td>
+                    <td><a href="tel:{{ reg.volunteer.profile.phone }}">{{ reg.volunteer.profile.phone|default:"-" }}</a></td>
+                    <td>{{ reg.volunteer.profile.city|default:"Chhatrapati Sambhajinagar" }}</td>
+                    <td><span class="badge bg-danger-subtle text-danger">{{ reg.volunteer.profile.blood_group }}</span></td>
+                    <td>
+                      <span class="badge bg-{% if reg.status == 'attended' %}success{% elif reg.status == 'registered' %}primary{% elif reg.status == 'absent' %}danger{% else %}secondary{% endif %}">
+                        {{ reg.get_status_display }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-2 text-muted">No volunteers registered yet for this session.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        {% empty %}
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-calendar-x fs-2 d-block mb-2 text-muted"></i>
+          <h5>No events currently assigned.</h5>
+          <p class="small">Foundation administrators will assign activities and scheduled drives to your coordinator account.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- My Submitted Reports Section -->
+    <div class="card border shadow-sm rounded-3 bg-white">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-journal-text text-primary me-2"></i> My Submitted Activity Reports
+        </h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Report Title</th>
+              <th>Related Drive</th>
+              <th>Volunteers Present</th>
+              <th>Beneficiaries Served</th>
+              <th>Status</th>
+              <th>Submitted Date</th>
+              <th>Admin Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rep in my_reports %}
+            <tr>
+              <td class="fw-bold">{{ rep.title }}</td>
+              <td>{{ rep.event.title }}</td>
+              <td>{{ rep.volunteers_present_count }}</td>
+              <td>{{ rep.beneficiaries_served_count }}</td>
+              <td>
+                <span class="badge bg-{% if rep.status == 'approved' %}success{% elif rep.status == 'pending' %}warning text-dark{% else %}danger{% endif %}">
+                  {{ rep.get_status_display }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ rep.submitted_at|date:"d M Y, H:i" }}</td>
+              <td class="small">{{ rep.admin_feedback|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-3 text-muted">No activity reports submitted yet. Use the submit button on assigned drives above.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
