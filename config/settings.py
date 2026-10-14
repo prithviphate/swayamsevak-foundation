@@ -119,21 +119,24 @@ else:
     # SQLite database path:
     # Vercel's /tmp directory is writable but temporary.
     if os.getenv("VERCEL"):
-        db_file = "/tmp/db.sqlite3"
-        base_db = BASE_DIR / "db.sqlite3"
+        import tempfile
         import shutil
-        if os.path.exists(base_db) and not os.path.exists(db_file):
-            try:
-                shutil.copy2(base_db, db_file)
-            except Exception as e:
-                print(f"Failed copying db.sqlite3 to /tmp: {e}")
+        tmp_dir = tempfile.gettempdir()
+        db_file = os.path.join(tmp_dir, "db.sqlite3")
+        base_db = BASE_DIR / "db.sqlite3"
+        if os.path.exists(base_db):
+            if not os.path.exists(db_file) or os.path.getsize(db_file) == 0:
+                try:
+                    shutil.copy2(base_db, db_file)
+                except Exception as e:
+                    print(f"Failed copying db.sqlite3 to /tmp: {e}")
     else:
         db_file = BASE_DIR / "db.sqlite3"
 
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": db_file,
+            "NAME": str(db_file),
         }
     }
 
@@ -162,7 +165,7 @@ USE_TZ = True
 # Static files
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 WHITENOISE_USE_FINDERS = True
 
