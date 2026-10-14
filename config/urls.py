@@ -22,5 +22,24 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
 
+import sys
+import traceback
+from django.http import HttpResponse
+
+def debug_500_handler(request):
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    if exc_type is not None:
+        tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        tb_str = "".join(tb_lines)
+    else:
+        tb_str = "No sys.exc_info() recorded."
+    return HttpResponse(
+        f"<html><body><h1>Django 500 Debug Traceback</h1><pre>{tb_str}</pre></body></html>",
+        status=500,
+        content_type="text/html; charset=utf-8"
+    )
+
 handler404 = 'core.views.custom_404_view'
+handler500 = 'config.urls.debug_500_handler'
+
 
