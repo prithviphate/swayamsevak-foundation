@@ -1,13 +1,15 @@
+
 #!/bin/bash
 set -e
 
-echo "=== Installing dependencies ==="
-python3 -m pip install -r requirements.txt
+echo "=== Creating virtual environment ==="
+python3 -m venv .venv
 
-echo "=== Applying database migrations ==="
-python3 manage.py migrate --noinput
+echo "=== Installing dependencies ==="
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
 
 echo "=== Collecting static files ==="
-python3 manage.py collectstatic --noinput --clear
+.venv/bin/python manage.py collectstatic --noinput --clear
 
 echo "=== Build finished ==="
