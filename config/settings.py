@@ -23,14 +23,21 @@ DEBUG = os.getenv("DEBUG", "False" if os.getenv("VERCEL") else "True").lower() i
     "true", "1", "yes"
 )
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv(
-        "ALLOWED_HOSTS",
-        "localhost,127.0.0.1,.vercel.app"
-    ).split(",")
-    if host.strip()
-]
+if os.getenv("VERCEL"):
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = [
+        host.strip()
+        for host in os.getenv(
+            "ALLOWED_HOSTS",
+            "localhost,127.0.0.1,.vercel.app,*.vercel.app"
+        ).split(",")
+        if host.strip()
+    ]
+    if ".vercel.app" not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(".vercel.app")
+    if "*.vercel.app" not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append("*.vercel.app")
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
@@ -40,6 +47,8 @@ CSRF_TRUSTED_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+if "https://*.vercel.app" not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append("https://*.vercel.app")
 
 # Application definition
 INSTALLED_APPS = [
@@ -111,6 +120,13 @@ else:
     # Vercel's /tmp directory is writable but temporary.
     if os.getenv("VERCEL"):
         db_file = "/tmp/db.sqlite3"
+        base_db = BASE_DIR / "db.sqlite3"
+        import shutil
+        if os.path.exists(base_db) and not os.path.exists(db_file):
+            try:
+                shutil.copy2(base_db, db_file)
+            except Exception as e:
+                print(f"Failed copying db.sqlite3 to /tmp: {e}")
     else:
         db_file = BASE_DIR / "db.sqlite3"
 
@@ -148,6 +164,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+WHITENOISE_USE_FINDERS = True
 
 # Media files
 MEDIA_URL = "/media/"
