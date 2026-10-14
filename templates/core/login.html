@@ -14,7 +14,7 @@
 
           <!-- Header -->
           <div class="text-center mb-4">
-            <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="rounded-circle shadow-sm mb-3 border border-2 border-warning" width="80" height="80" style="object-fit: cover;">
+            <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="rounded-circle shadow-sm mb-3 border border-2 border-warning" width="80" height="80" style="object-fit: cover;" onerror="this.onerror=null;this.src='/static/images/logo.png';">
             <h2 class="fw-bold mb-1">
               {% if is_mr %}खात्यात लॉगिन करा{% else %}Account Login{% endif %}
             </h2>

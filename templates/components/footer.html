@@ -4,7 +4,7 @@
       <!-- Col 1: Foundation Overview -->
       <div class="col-lg-4 col-md-6">
         <div class="d-flex align-items-center gap-3 mb-3">
-          <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="footer-logo-img" width="52" height="52" style="border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); padding: 2px;">
+          <img src="{{ foundation.logo_url }}" alt="{{ foundation.name|default:'Swayamsevak Foundation' }} Logo" class="footer-logo-img" width="52" height="52" style="border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); padding: 2px;" onerror="this.onerror=null;this.src='/static/images/logo.png';">
           <div>
             <span class="fs-5 fw-bold text-white d-block lh-sm">{{ foundation.name|default:"Swayamsevak Foundation" }}</span>
             <small class="text-warning small">{{ foundation.tagline_mr|default:"स्वावलंबनातून समाजसेवा" }}</small>

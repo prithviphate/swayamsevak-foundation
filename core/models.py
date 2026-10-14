@@ -221,8 +221,12 @@ class FoundationSetting(models.Model):
     @property
     def logo_url(self):
         """Returns uploaded logo URL or falls back to static transparent logo."""
-        if self.logo and hasattr(self.logo, 'url'):
-            return self.logo.url
+        if self.logo and hasattr(self.logo, 'name') and self.logo.name:
+            try:
+                if self.logo.storage.exists(self.logo.name):
+                    return self.logo.url
+            except Exception:
+                pass
         return '/static/images/logo.png'
 
     @classmethod

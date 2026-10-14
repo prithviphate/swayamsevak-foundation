@@ -17,7 +17,8 @@ local_settings.py
 db.sqlite3-journal
 staticfiles/
 staticfiles_build/
-media/
+media/*
+!media/logos/
 
 # Environment Variables
 .env
