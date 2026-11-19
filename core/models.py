@@ -33,6 +33,17 @@ def validate_achievement_media(file):
         raise ValidationError("Unsupported file format. Allowed formats: JPG, JPEG, PNG, WEBP, PDF.")
 
 
+def validate_csr_document(file):
+    """Ensure uploaded CSR document/proposal is under 10MB and valid format."""
+    max_size = 10 * 1024 * 1024  # 10MB
+    if file.size > max_size:
+        raise ValidationError("File size exceeds 10MB limit. Please upload a document under 10MB.")
+    ext = os.path.splitext(file.name)[1].lower()
+    if ext not in ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']:
+        raise ValidationError("Unsupported format. Allowed formats: PDF, DOC, DOCX, JPG, PNG.")
+
+
+
 class FoundationSetting(models.Model):
     """
     Singleton model to store official foundation metadata and content,
@@ -74,7 +85,7 @@ class FoundationSetting(models.Model):
     )
     phone = models.CharField(
         max_length=20,
-        default="9852827771"
+        default="9185088277"
     )
     email = models.EmailField(
         default="swayamsevakfoundation24@gmail.com"
@@ -746,6 +757,11 @@ class UserProfile(models.Model):
         default="unknown"
     )
     occupation = models.CharField(max_length=100, blank=True)
+    skills = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional skills (e.g., photography, teaching, medical, logistics, social media)"
+    )
     privacy_consent = models.BooleanField(
         default=True,
         help_text="Consent to privacy policy and volunteer terms"
@@ -988,6 +1004,11 @@ class EventRegistration(models.Model):
     def __str__(self):
         return f"{self.volunteer.username} -> {self.event.title} ({self.get_status_display()})"
 
+    @property
+    def user(self):
+        return self.volunteer
+
+
 
 class ActivityReport(models.Model):
     """
@@ -1183,6 +1204,9 @@ class AuditLog(models.Model):
             details=details,
             ip_address=ip_address
         )
+
+    log = log_action
+
 
 
 class LoginAttempt(models.Model):
@@ -1619,6 +1643,127 @@ class ReminderLog(models.Model):
         return f"Reminder: {self.event.title} -> {self.recipient.username} ({self.status})"
 
 
+class CSREnquiry(models.Model):
+    """
+    Corporate Social Responsibility (CSR) funding and corporate partnership enquiry model.
+    Enables corporate organizations and institutions to submit proposals, select project focus areas,
+    and allows authorized administrators to manage status, budgets, and supporting documents.
+    """
+    CATEGORY_CHOICES = (
+        ('hunger_relief', 'Hunger Relief and Food Distribution'),
+        ('education_support', 'Education Support for Underprivileged Children'),
+        ('health_camps', 'Health Checkup Camps'),
+        ('blood_donation', 'Blood Donation Camps'),
+        ('environment_cleanliness', 'Environmental Protection and Cleanliness Drives'),
+        ('community_welfare', 'Community Welfare'),
+        ('orphanage_old_age', 'Support for Orphanages and Old Age Homes'),
+        ('animal_welfare', 'Animal Welfare and Gaushala Support'),
+    )
+
+    BUDGET_CHOICES = (
+        ('under_50k', 'Up to ₹50,000'),
+        ('50k_1lakh', '₹50,000 – ₹1,00,000'),
+        ('1lakh_5lakh', '₹1,00,000 – ₹5,00,000'),
+        ('5lakh_10lakh', '₹5,00,000 – ₹10,00,000'),
+        ('above_10lakh', 'Above ₹10,00,000'),
+        ('in_kind', 'In-Kind Contribution / Material Goods'),
+    )
+
+    COLLABORATION_CHOICES = (
+        ('project_sponsorship', 'Direct Project Sponsorship'),
+        ('material_support', 'In-Kind Resource / Food / Item Donation'),
+        ('employee_volunteering', 'Corporate Volunteering & Employee Engagement'),
+        ('recurring_grant', 'Annual / Recurring Social Grant'),
+        ('strategic_partnership', 'Strategic Welfare Partnership'),
+    )
+
+    STATUS_CHOICES = (
+        ('new', 'New'),
+        ('under_review', 'Under Review'),
+        ('contacted', 'Contacted'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+
+    company_name = models.CharField(max_length=255, verbose_name="Company / Organization Name")
+    contact_person = models.CharField(max_length=200, verbose_name="Contact Person")
+    designation = models.CharField(max_length=150, verbose_name="Designation")
+    email = models.EmailField(verbose_name="Official Email Address")
+    phone = models.CharField(max_length=20, verbose_name="Contact Number")
+    budget_range = models.CharField(
+        max_length=50,
+        choices=BUDGET_CHOICES,
+        default='50k_1lakh',
+        verbose_name="CSR Budget Range"
+    )
+    project_category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default='hunger_relief',
+        verbose_name="Interested Project Category"
+    )
+    proposed_collaboration = models.CharField(
+        max_length=50,
+        choices=COLLABORATION_CHOICES,
+        default='project_sponsorship',
+        verbose_name="Proposed Collaboration"
+    )
+    message = models.TextField(verbose_name="Message / Scope of Interest")
+    privacy_consent = models.BooleanField(
+        default=True,
+        verbose_name="Privacy & Collaboration Consent"
+    )
+
+    # Admin Management Fields
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new',
+        verbose_name="Review Status"
+    )
+    project_description = models.TextField(
+        blank=True,
+        verbose_name="Admin: Project Scope & Implementation Description",
+        help_text="Detailed project plan or agreement summary prepared by administrator"
+    )
+    proposed_budget = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Admin: Proposed Budget (INR)",
+        help_text="Officially sanctioned or discussed budget"
+    )
+    supporting_document = models.FileField(
+        upload_to='csr_documents/',
+        blank=True,
+        null=True,
+        validators=[validate_csr_document],
+        verbose_name="Supporting Document / MoU / Proposal",
+        help_text="Upload official MoU, CSR proposal, or resolution (PDF/DOCX/JPG, max 10MB)"
+    )
+    admin_notes = models.TextField(blank=True, verbose_name="Admin Internal Notes")
+    reviewed_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='reviewed_csr_enquiries',
+        verbose_name="Reviewed By"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "CSR Enquiry"
+        verbose_name_plural = "CSR Enquiries & Proposals"
+
+    def __str__(self):
+        return f"{self.company_name} - {self.get_project_category_display()} ({self.get_status_display()})"
+
+
 # Model aliases for architectural compliance
 FoundationSettings = FoundationSetting
 AdminAuditLog = AuditLog
@@ -1626,5 +1771,6 @@ VolunteerApplication = Volunteer
 Enquiry = ContactInquiry
 Recognition = Achievement
 PartnerCollaboration = Collaboration
+
 
 

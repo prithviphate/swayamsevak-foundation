@@ -74,7 +74,7 @@
                   Mobile Number <span class="text-danger">*</span>
                 </label>
                 {{ form.phone }}
-                <div class="form-text small">10-digit Indian phone (e.g. 9852827771)</div>
+                <div class="form-text small">10-digit Indian phone (e.g. 9185088277)</div>
                 {% if form.phone.errors %}
                   <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
                 {% endif %}
@@ -210,7 +210,7 @@
           </p>
           <div class="d-flex flex-column gap-2 small">
             <div><i class="bi bi-person-fill text-primary me-2"></i><strong>Coordinator:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
-            <div><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Phone:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}">{{ foundation.phone|default:"9852827771" }}</a></div>
+            <div><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Phone:</strong> <a href="tel:{{ foundation.phone|default:'9185088277' }}">{{ foundation.phone|default:"9185088277" }}</a></div>
             <div><i class="bi bi-envelope-fill text-primary me-2"></i><strong>Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
             <div><i class="bi bi-geo-alt-fill text-primary me-2"></i><strong>Location:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
           </div>

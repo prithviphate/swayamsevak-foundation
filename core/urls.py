@@ -18,6 +18,7 @@ urlpatterns = [
     path('volunteer/', views.volunteer_view, name='volunteer'),
     path('donate/', views.support_view, name='donate'),
     path('support-our-work/', views.support_view, name='support'),
+    path('csr/', views.csr_view, name='csr'),
     path('announcements/', views.announcements_view, name='announcements'),
     path('impact/', views.impact_view, name='impact'),
     path('achievements/', views.impact_view, name='achievements'),
@@ -50,4 +51,5 @@ urlpatterns = [
     path('manage/coordinators/assign/', views.admin_assign_coordinator_view, name='admin_assign_coordinator'),
     path('manage/reports/<int:report_id>/review/', views.admin_review_report_view, name='admin_review_report'),
     path('manage/announcements/create/', views.admin_create_announcement_view, name='admin_create_announcement'),
+    path('manage/csr/<int:csr_id>/status/', views.admin_update_csr_status_view, name='admin_update_csr_status'),
 ]

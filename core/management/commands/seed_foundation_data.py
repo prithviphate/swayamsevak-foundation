@@ -38,7 +38,7 @@ class Command(BaseCommand):
         setting.established_date = "January 2024"
         setting.city = "Chhatrapati Sambhajinagar, Maharashtra, India"
         setting.founder_president = "Om Vinod Dhadbale"
-        setting.phone = "9852827771"
+        setting.phone = "9185088277"
         setting.email = "swayamsevakfoundation24@gmail.com"
         setting.address = "TV Center, Chhatrapati Sambhajinagar, 431001"
         setting.languages_supported = "English and Marathi"
@@ -527,7 +527,7 @@ class Command(BaseCommand):
         admin_profile = UserProfile.get_profile_for_user(admin_user)
         admin_profile.role = 'admin'
         admin_profile.status = 'approved'
-        admin_profile.phone = '9852827771'
+        admin_profile.phone = '9185088277'
         admin_profile.save()
         self.stdout.write(self.style.SUCCESS("[OK] Administrator account initialized (admin / admin123)."))
 

@@ -105,6 +105,28 @@
           </div>
         </div>
       </div>
+
+      <div class="col-lg-12">
+        <div class="p-3 bg-white rounded-3 border shadow-sm d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-primary-subtle text-primary rounded-3 fs-4">
+              <i class="bi bi-briefcase-fill"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold mb-0 text-dark">CSR Funding & Corporate Proposals</h6>
+              <small class="text-muted">{{ total_csr_enquiries }} total corporate inquiries recorded</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6">
+              {{ pending_csr_count }} Pending Review
+            </span>
+            <a href="#csrSection" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-arrow-down me-1"></i> Jump to CSR Management
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Section 1: Pending Volunteer Applications -->
@@ -384,6 +406,163 @@
             {% empty %}
             <tr>
               <td colspan="7" class="text-center py-4 text-muted">No upcoming events scheduled.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    <!-- Section 4.5: CSR Funding & Corporate Partnership Enquiries -->
+    <div class="card border shadow-sm rounded-3 mb-5 bg-white" id="csrSection">
+      <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-briefcase-fill text-primary me-2"></i>
+            CSR Proposals & Corporate Partnership Management
+          </h5>
+          <small class="text-muted">Review proposals, set review status, assign project budgets, and attach agreements</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-primary px-3 py-2">{{ total_csr_enquiries }} Total Proposals</span>
+          <a href="{% url 'admin:core_csrenquiry_changelist' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Django Admin CSR
+          </a>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Company / Institution</th>
+              <th>Representative</th>
+              <th>Category & Collaboration</th>
+              <th>Indicative Budget</th>
+              <th>Status</th>
+              <th>Submission Date</th>
+              <th class="text-end">Manage Proposal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for csr in recent_csr_enquiries %}
+            <tr>
+              <td>
+                <div class="fw-bold text-dark">{{ csr.company_name }}</div>
+                <small class="text-muted">{{ csr.designation }}</small>
+              </td>
+              <td>
+                <div>{{ csr.contact_person }}</div>
+                <div class="small text-muted">
+                  <a href="tel:{{ csr.phone }}" class="text-decoration-none me-2"><i class="bi bi-telephone text-muted"></i> {{ csr.phone }}</a>
+                  <a href="mailto:{{ csr.email }}" class="text-decoration-none"><i class="bi bi-envelope text-muted"></i> {{ csr.email }}</a>
+                </div>
+              </td>
+              <td>
+                <div class="fw-semibold text-primary small">{{ csr.get_project_category_display }}</div>
+                <small class="text-muted">{{ csr.get_proposed_collaboration_display }}</small>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border">{{ csr.get_budget_range_display }}</span>
+                {% if csr.proposed_budget %}
+                  <div class="small text-success fw-bold mt-1">Sanctioned: ₹{{ csr.proposed_budget }}</div>
+                {% endif %}
+              </td>
+              <td>
+                {% if csr.status == 'new' %}
+                  <span class="badge bg-primary">New</span>
+                {% elif csr.status == 'under_review' %}
+                  <span class="badge bg-warning text-dark">Under Review</span>
+                {% elif csr.status == 'contacted' %}
+                  <span class="badge bg-info text-dark">Contacted</span>
+                {% elif csr.status == 'approved' %}
+                  <span class="badge bg-success">Approved</span>
+                {% elif csr.status == 'rejected' %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% endif %}
+              </td>
+              <td class="small text-muted">{{ csr.created_at|date:"d M Y, H:i" }}</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#csrModal{{ csr.id }}">
+                  <i class="bi bi-sliders me-1"></i> Review & Update
+                </button>
+              </td>
+            </tr>
+
+            <!-- CSR Proposal Review Modal -->
+            <div class="modal fade" id="csrModal{{ csr.id }}" tabindex="-1" aria-labelledby="csrModalLabel{{ csr.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <form method="post" action="{% url 'admin_update_csr_status' csr.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                      <h5 class="modal-title fw-bold" id="csrModalLabel{{ csr.id }}">
+                        CSR Proposal: {{ csr.company_name }}
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Proposal Summary Details -->
+                      <div class="p-3 bg-light rounded-3 mb-3 small">
+                        <div class="row g-2">
+                          <div class="col-sm-6"><strong>Contact Person:</strong> {{ csr.contact_person }} ({{ csr.designation }})</div>
+                          <div class="col-sm-6"><strong>Phone:</strong> {{ csr.phone }} | <strong>Email:</strong> {{ csr.email }}</div>
+                          <div class="col-sm-6"><strong>Category:</strong> {{ csr.get_project_category_display }}</div>
+                          <div class="col-sm-6"><strong>Budget Range:</strong> {{ csr.get_budget_range_display }}</div>
+                          <div class="col-12 mt-2"><strong>Company Proposal Scope:</strong></div>
+                          <div class="col-12 p-2 bg-white rounded border">{{ csr.message|linebreaksbr }}</div>
+                        </div>
+                      </div>
+
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold small">Review Status</label>
+                          <select name="status" class="form-select">
+                            <option value="new" {% if csr.status == 'new' %}selected{% endif %}>New</option>
+                            <option value="under_review" {% if csr.status == 'under_review' %}selected{% endif %}>Under Review</option>
+                            <option value="contacted" {% if csr.status == 'contacted' %}selected{% endif %}>Contacted</option>
+                            <option value="approved" {% if csr.status == 'approved' %}selected{% endif %}>Approved</option>
+                            <option value="rejected" {% if csr.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold small">Officially Sanctioned Budget (INR)</label>
+                          <input type="number" step="0.01" name="proposed_budget" class="form-control" value="{{ csr.proposed_budget|default:'' }}" placeholder="e.g. 150000.00">
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label fw-bold small">Project Scope & Implementation Plan</label>
+                          <textarea name="project_description" class="form-control" rows="3" placeholder="Outline deliverables, target timeline, execution milestones...">{{ csr.project_description }}</textarea>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label fw-bold small">Supporting Document / MoU / Corporate Proposal</label>
+                          {% if csr.supporting_document %}
+                            <div class="mb-2 small">
+                              Current Document: <a href="{{ csr.supporting_document.url }}" target="_blank" class="fw-bold"><i class="bi bi-file-earmark-pdf"></i> View Uploaded Agreement</a>
+                            </div>
+                          {% endif %}
+                          <input type="file" name="supporting_document" class="form-control">
+                          <small class="text-muted">Allowed formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB)</small>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label fw-bold small">Admin Internal Notes</label>
+                          <textarea name="admin_notes" class="form-control" rows="2" placeholder="Record meeting dates, discussions, executive committee approval notes...">{{ csr.admin_notes }}</textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary-custom btn-sm">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">
+                <i class="bi bi-briefcase fs-3 d-block mb-1 text-muted"></i>
+                No CSR proposals submitted yet. Public inquiries will appear here for review.
+              </td>
             </tr>
             {% endfor %}
           </tbody>

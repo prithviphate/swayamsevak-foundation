@@ -41,6 +41,7 @@ from .models import (
     Achievement,
     Collaboration,
     ReminderLog,
+    CSREnquiry,
 )
 from .forms import (
     VolunteerForm,
@@ -53,6 +54,17 @@ from .forms import (
     ProfileUpdateForm,
     ActivityReportSubmissionForm,
     AnnouncementCreationForm,
+    CSREnquiryForm,
+    AdminCSREnquiryUpdateForm,
+)
+from .notifications import (
+    notify_volunteer_registration,
+    notify_volunteer_status_change,
+    notify_event_registration,
+    send_event_reminder,
+    notify_contact_inquiry,
+    notify_csr_enquiry,
+    safe_send_mail,
 )
 from .decorators import role_required, admin_required, coordinator_required, volunteer_required
 
@@ -383,6 +395,7 @@ def contact_view(request):
         form = ContactInquiryForm(request.POST)
         if form.is_valid():
             inquiry = form.save()
+            notify_contact_inquiry(inquiry)
             messages.success(
                 request,
                 f"Thank you, {inquiry.name}. Your message has been sent successfully. "
@@ -399,6 +412,120 @@ def contact_view(request):
 
     context = {'form': form}
     return render(request, 'core/contact.html', context)
+
+
+def csr_view(request):
+    """
+    CSR Funding & Corporate Partnerships page.
+    Introduces collaboration avenues across the 8 CSR focus categories,
+    explains execution models, displays verified foundation contact channels,
+    and processes institutional CSR partnership inquiries.
+    """
+    settings = FoundationSetting.get_settings()
+
+    csr_categories = [
+        {
+            'slug': 'hunger_relief',
+            'title_en': 'Hunger Relief & Food Distribution',
+            'title_mr': 'अन्नदान व भूकमुक्ती उपक्रम',
+            'icon': 'bi-cup-hot-fill',
+            'description_en': 'Weekly Sunday nutrition drives, fresh hot meal distribution to homeless, destitute, and low-income community clusters across Chhatrapati Sambhajinagar.',
+            'description_mr': 'छत्रपती संभाजीनगरमधील बेघर, गरजू आणि वंचित घटकांसाठी दर रविवारी सकस व ताजे अन्नदान आणि पोषण सहाय्य उपक्रम.',
+        },
+        {
+            'slug': 'education_support',
+            'title_en': 'Education Support for Underprivileged Children',
+            'title_mr': 'वंचित मुलांसाठी शिक्षण सहाय्य',
+            'icon': 'bi-book-half',
+            'description_en': 'Distribution of school kits, notebooks, stationery, uniforms, and digital educational aids to underprivileged children and slum study groups.',
+            'description_mr': 'वंचित व गरजू विद्यार्थ्यांसाठी वह्या-पुस्तके, शालेय साहित्य, गणवेश वाटप आणि अभ्यास सहाय्य उपक्रम.',
+        },
+        {
+            'slug': 'health_camps',
+            'title_en': 'Health Checkup Camps',
+            'title_mr': 'मोफत आरोग्य तपासणी शिबिरे',
+            'icon': 'bi-heart-pulse-fill',
+            'description_en': 'Free preventive medical checkups, general physician consultations, eye tests, and distribution of essential medicines in marginalized areas.',
+            'description_mr': 'वस्त्यांमध्ये मोफत आरोग्य तपासणी, प्राथमिक वैद्यकीय सल्ला, नेत्र तपासणी आणि आवश्यक औषध वाटप शिबिरे.',
+        },
+        {
+            'slug': 'blood_donation',
+            'title_en': 'Blood Donation Camps',
+            'title_mr': 'रक्तदान शिबिरे',
+            'icon': 'bi-droplet-fill',
+            'description_en': 'Voluntary emergency blood donation drives organized in coordination with authorized civil blood banks to serve critical patients in need.',
+            'description_mr': 'अधिकृत रक्तपेढ्यांच्या सहकार्याने आयोजित स्वयंसेवी रक्तदान शिबिरे व आपत्कालीन रक्त पुरवठा सहाय्य.',
+        },
+        {
+            'slug': 'environment_cleanliness',
+            'title_en': 'Environmental Protection & Cleanliness Drives',
+            'title_mr': 'पर्यावरण संवर्धन व स्वच्छता अभियान',
+            'icon': 'bi-tree-fill',
+            'description_en': 'Community cleanliness drives, Swachh Bharat cleanliness campaigns in public areas, tree plantation, and anti-plastic environmental awareness.',
+            'description_mr': 'सार्वजनिक ठिकाणे, उद्याने व वस्त्यांमध्ये स्वच्छता मोहीम, वृक्षारोपण व पर्यावरण संवर्धन जनजागृती.',
+        },
+        {
+            'slug': 'community_welfare',
+            'title_en': 'Community Welfare Initiatives',
+            'title_mr': 'सर्वसमावेशक समाजकल्याण',
+            'icon': 'bi-people-fill',
+            'description_en': 'Winter blanket distribution to sidewalk dwellers, festive food & clothes sharing during Diwali and birthdays with underprivileged families.',
+            'description_mr': 'हिवाळ्यात रस्त्यावरील गरजूंना ब्लँकेट वाटप, सण-उत्सवांमध्ये मिठाई, नवीन कपडे व आनंद वाटप उपक्रम.',
+        },
+        {
+            'slug': 'orphanage_old_age',
+            'title_en': 'Support for Orphanages & Old Age Homes',
+            'title_mr': 'अनाथाश्रम व वृद्धाश्रम सहाय्य',
+            'icon': 'bi-house-heart-fill',
+            'description_en': 'Dedicated visits, nutritional ration support, hygiene kits, emotional bonding, and cultural celebrations with elderly and children in institutional shelters.',
+            'description_mr': 'अनाथाश्रम व वृद्धाश्रमांना नियमित भेटी, धान्य-किराणा सहाय्य, स्वच्छता साहित्य व आपुलकीचे क्षण निर्माण करणे.',
+        },
+        {
+            'slug': 'animal_welfare',
+            'title_en': 'Animal Welfare & Gaushala Support',
+            'title_mr': 'प्राणीकल्याण व गोशाळा सहाय्य',
+            'icon': 'bi-shield-shaded',
+            'description_en': 'Providing fodder, water arrangements, medical care for stray animals, and coordinated assistance to local registered gaushalas.',
+            'description_mr': 'मुक्या प्राण्यांसाठी चारा, पाण्याची सोय, जखमी प्राण्यांवर प्रथमोपचार व स्थानिक गोशाळांना सहाय्य.',
+        },
+    ]
+
+    if request.method == 'POST':
+        form = CSREnquiryForm(request.POST)
+        if form.is_valid():
+            csr = form.save(commit=False)
+            csr.status = 'new'
+            csr.save()
+
+            AuditLog.log_action(
+                user=request.user if request.user.is_authenticated else None,
+                action="CSR_ENQUIRY_SUBMITTED",
+                target_repr=f"CSR proposal by {csr.company_name} ({csr.get_project_category_display()})",
+                ip_address=get_client_ip(request)
+            )
+
+            notify_csr_enquiry(csr)
+
+            messages.success(
+                request,
+                f"Thank you, {csr.contact_person}! Your CSR collaboration enquiry from '{csr.company_name}' "
+                "has been received. Our foundation leadership will review the proposal and get in touch with you shortly."
+            )
+            return redirect('csr')
+        else:
+            messages.error(
+                request,
+                "There was an issue with your submission. Please check the marked fields below."
+            )
+    else:
+        form = CSREnquiryForm()
+
+    context = {
+        'foundation': settings,
+        'csr_categories': csr_categories,
+        'form': form,
+    }
+    return render(request, 'core/csr.html', context)
 
 
 def switch_language_view(request, lang_code):
@@ -523,6 +650,9 @@ def register_view(request):
                 ip_address=ip
             )
 
+            # Send volunteer registration notification email
+            notify_volunteer_registration(user, user.profile)
+
             # Log the volunteer in automatically
             login(request, user)
             messages.success(
@@ -574,6 +704,18 @@ def forgot_password_view(request):
                     reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
                 )
                 reset_link_preview = reset_link
+
+                # Send password reset email safely
+                reset_subject = "Reset Your Swayamsevak Foundation Account Password"
+                reset_body = (
+                    f"Namaste {user.get_full_name() or user.username},\n\n"
+                    f"You recently requested to reset your password for the Swayamsevak Foundation portal.\n"
+                    f"Please click the secure link below to set a new password:\n\n"
+                    f"{reset_link}\n\n"
+                    f"This link is valid for a single use. If you did not make this request, you can safely ignore this email.\n\n"
+                    f"Swayamsevak Foundation Support"
+                )
+                safe_send_mail(reset_subject, reset_body, [user.email])
 
                 AuditLog.log_action(
                     user=user,
@@ -724,6 +866,18 @@ def admin_dashboard_view(request):
 
     all_activities = Activity.objects.filter(is_active=True).order_by('title')
 
+    # CSR & Partner Enquiries
+    total_csr_enquiries = CSREnquiry.objects.count()
+    pending_csr_count = CSREnquiry.objects.filter(status__in=['new', 'under_review']).count()
+    recent_csr_enquiries = CSREnquiry.objects.select_related('reviewed_by').order_by('-created_at')[:20]
+
+    # Additional Admin Management Collections
+    all_donations = DonationRecord.objects.order_by('-created_at')[:15]
+    all_gallery_items = GalleryMedia.objects.select_related('activity', 'category').order_by('-created_at')[:15]
+    impact_stats_all = ImpactStatistic.objects.order_by('order')
+    all_achievements = Achievement.objects.order_by('order')
+    all_collaborations = Collaboration.objects.order_by('order')
+
     context = {
         'total_volunteers': total_volunteers,
         'pending_volunteers_count': pending_volunteers_count,
@@ -733,6 +887,8 @@ def admin_dashboard_view(request):
         'pending_reports_count': pending_reports_count,
         'total_support_inquiries': total_support_inquiries,
         'total_contact_inquiries': total_contact_inquiries,
+        'total_csr_enquiries': total_csr_enquiries,
+        'pending_csr_count': pending_csr_count,
         'pending_volunteers': pending_volunteers,
         'all_volunteers': all_volunteers,
         'coordinators': coordinators,
@@ -740,9 +896,15 @@ def admin_dashboard_view(request):
         'pending_reports': pending_reports,
         'recent_support_pledges': recent_support_pledges,
         'recent_contact_inquiries': recent_contact_inquiries,
+        'recent_csr_enquiries': recent_csr_enquiries,
         'recent_audit_logs': recent_audit_logs,
         'announcements': announcements,
         'all_activities': all_activities,
+        'all_donations': all_donations,
+        'all_gallery_items': all_gallery_items,
+        'impact_stats_all': impact_stats_all,
+        'all_achievements': all_achievements,
+        'all_collaborations': all_collaborations,
     }
     return render(request, 'core/admin_dashboard.html', context)
 
@@ -867,6 +1029,7 @@ def event_register_view(request, event_id):
     )
 
     if created:
+        notify_event_registration(registration)
         AuditLog.log_action(
             user=request.user,
             action="EVENT_REGISTERED",
@@ -878,6 +1041,7 @@ def event_register_view(request, event_id):
         if registration.status == 'cancelled':
             registration.status = 'registered'
             registration.save()
+            notify_event_registration(registration)
             messages.success(request, f"Your registration for '{event.title}' has been re-activated.")
         else:
             messages.info(request, f"You are already registered for '{event.title}'.")
@@ -1040,6 +1204,9 @@ def admin_update_volunteer_status_view(request, profile_id, new_status):
         ip_address=get_client_ip(request)
     )
 
+    # Dispatch email notification to volunteer
+    notify_volunteer_status_change(target_profile, request.user)
+
     messages.success(
         request,
         f"Volunteer '{target_profile.user.get_full_name() or target_profile.user.username}' marked as '{target_profile.get_status_display()}'."
@@ -1143,3 +1310,36 @@ def staff_dashboard_view(request):
     elif profile.is_coordinator_role:
         return redirect('coordinator_dashboard')
     return redirect('volunteer_dashboard')
+
+
+@admin_required
+def admin_update_csr_status_view(request, csr_id):
+    """
+    Administrator action to update CSR proposal status, budget, project description,
+    internal notes, or attach official agreement documents.
+    """
+    csr = get_object_or_404(CSREnquiry, id=csr_id)
+
+    if request.method == 'POST':
+        form = AdminCSREnquiryUpdateForm(request.POST, request.FILES, instance=csr)
+        if form.is_valid():
+            updated_csr = form.save(commit=False)
+            updated_csr.reviewed_by = request.user
+            updated_csr.save()
+
+            AuditLog.log_action(
+                user=request.user,
+                action="CSR_STATUS_UPDATED",
+                target_repr=f"CSR {csr.company_name} status updated to {updated_csr.get_status_display()}",
+                ip_address=get_client_ip(request)
+            )
+
+            messages.success(
+                request,
+                f"CSR proposal from '{csr.company_name}' updated successfully to '{updated_csr.get_status_display()}'."
+            )
+        else:
+            messages.error(request, "Failed to update CSR proposal. Please verify the submitted data.")
+
+    return redirect('admin_dashboard')
+

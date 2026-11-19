@@ -74,7 +74,7 @@
                   Mobile Number <span class="text-danger">*</span>
                 </label>
                 {{ form.phone }}
-                <div class="form-text small">10-digit Indian contact number (e.g. 9852827771)</div>
+                <div class="form-text small">10-digit Indian contact number (e.g. 9185088277)</div>
                 {% if form.phone.errors %}
                   <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
                 {% endif %}
@@ -123,6 +123,18 @@
                   <div class="text-danger small mt-1">{{ form.blood_group.errors.0 }}</div>
                 {% endif %}
               </div>
+            </div>
+
+            <!-- Optional Special Skills -->
+            <div class="mb-3">
+              <label for="{{ form.skills.id_for_label }}" class="form-label">
+                Special Skills & Talents (Optional)
+              </label>
+              {{ form.skills }}
+              <div class="form-text small">e.g. Photography, First Aid, Teaching, Driving, Social Media, Logistics</div>
+              {% if form.skills.errors %}
+                <div class="text-danger small mt-1">{{ form.skills.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <!-- Interests & Skills -->

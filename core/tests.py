@@ -29,6 +29,7 @@ from core.models import (
     Achievement,
     Collaboration,
     ReminderLog,
+    CSREnquiry,
     validate_image_file,
     validate_achievement_media,
 )
@@ -38,6 +39,12 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from core.forms import validate_indian_phone
 from django.core.exceptions import ValidationError
+from core.notifications import (
+    send_event_reminder,
+    safe_send_mail,
+    notify_volunteer_registration,
+    notify_csr_enquiry,
+)
 
 User = get_user_model()
 
@@ -59,7 +66,7 @@ class FoundationModelTests(TestCase):
         s2 = FoundationSetting.get_settings()
         self.assertEqual(self.setting.id, s2.id)
         self.assertEqual(self.setting.name, "Swayamsevak Foundation")
-        self.assertEqual(self.setting.phone, "9852827771")
+        self.assertEqual(self.setting.phone, "9185088277")
         self.assertEqual(self.setting.founder_president, "Om Vinod Dhadbale")
         self.assertEqual(self.setting.city, "Chhatrapati Sambhajinagar, Maharashtra, India")
 
@@ -109,7 +116,7 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Swayamsevak Foundation")
         self.assertContains(response, "स्वावलंबनातून समाजसेवा")
-        self.assertContains(response, "9852827771")
+        self.assertContains(response, "9185088277")
         self.assertContains(response, "Om Vinod Dhadbale")
 
     def test_about_page_status(self):
@@ -675,7 +682,7 @@ class PublicPagesAndModelsTests(TestCase):
         self.assertContains(res, "Swayamsevak Foundation")
         self.assertContains(res, "Om Vinod Dhadbale")
         self.assertContains(res, "TV Center, Chhatrapati Sambhajinagar, 431001")
-        self.assertContains(res, "9852827771")
+        self.assertContains(res, "9185088277")
 
     def test_custom_404_page(self):
         res = self.client.get('/definitely-nonexistent-page-url-xyz/')
@@ -959,6 +966,224 @@ class ImpactAndAchievementsTests(TestCase):
         res = self.client.get(reverse('home'))
         self.assertEqual(res.status_code, 200)
         self.assertContains(res, reverse('impact'))
+        self.assertContains(res, reverse('csr'))
+
+
+class CSRModuleTests(TestCase):
+    """
+    Test suite for CSR Funding & Corporate Collaboration module.
+    """
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_superuser(
+            username='admin_csr',
+            email='admin_csr@example.com',
+            password='Password123!'
+        )
+
+        self.coordinator_user = User.objects.create_user(
+            username='coord_csr',
+            email='coord_csr@example.com',
+            password='Password123!'
+        )
+        self.coordinator_user.profile.role = 'coordinator'
+        self.coordinator_user.profile.status = 'approved'
+        self.coordinator_user.profile.save()
+
+    def test_csr_page_renders_with_8_categories_and_disclaimer(self):
+        response = self.client.get(reverse('csr'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "CSR Funding & Corporate Partnerships")
+        self.assertContains(response, "Hunger Relief &amp; Food Distribution")
+        self.assertContains(response, "Education Support for Underprivileged Children")
+        self.assertContains(response, "Health Checkup Camps")
+        self.assertContains(response, "Blood Donation Camps")
+        self.assertContains(response, "Environmental Protection &amp; Cleanliness Drives")
+        self.assertContains(response, "Community Welfare")
+        self.assertContains(response, "Support for Orphanages &amp; Old Age Homes")
+        self.assertContains(response, "Animal Welfare &amp; Gaushala Support")
+        self.assertContains(response, "Institutional Transparency & Statutory Compliance Disclosure")
+        self.assertContains(response, "9185088277")
+
+    def test_csr_enquiry_submission_success(self):
+        payload = {
+            'company_name': 'Bajaj Auto CSR Foundation',
+            'contact_person': 'Anand Kulkarni',
+            'designation': 'CSR Program Director',
+            'email': 'anand.kulkarni@bajajauto.com',
+            'phone': '9822012345',
+            'budget_range': '1lakh_5lakh',
+            'project_category': 'hunger_relief',
+            'proposed_collaboration': 'project_sponsorship',
+            'message': 'We wish to sponsor 12 Sunday community food distribution drives across Chhatrapati Sambhajinagar.',
+            'privacy_consent': True,
+        }
+        response = self.client.post(reverse('csr'), data=payload)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('csr'))
+
+        enquiry = CSREnquiry.objects.filter(company_name='Bajaj Auto CSR Foundation').first()
+        self.assertIsNotNone(enquiry)
+        self.assertEqual(enquiry.status, 'new')
+        self.assertEqual(enquiry.project_category, 'hunger_relief')
+        self.assertTrue(enquiry.privacy_consent)
+
+    def test_csr_enquiry_invalid_phone_rejection(self):
+        payload = {
+            'company_name': 'Test Corp',
+            'contact_person': 'Test Representative',
+            'designation': 'Manager',
+            'email': 'rep@testcorp.com',
+            'phone': '12345',  # Invalid phone
+            'budget_range': '50k_1lakh',
+            'project_category': 'health_camps',
+            'proposed_collaboration': 'material_support',
+            'message': 'Test proposal scope.',
+            'privacy_consent': True,
+        }
+        response = self.client.post(reverse('csr'), data=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(CSREnquiry.objects.filter(company_name='Test Corp').exists())
+
+    def test_admin_update_csr_status_view(self):
+        csr = CSREnquiry.objects.create(
+            company_name='Mahindra Rise',
+            contact_person='Sunita Patil',
+            designation='VP CSR',
+            email='sunita.patil@mahindra.com',
+            phone='9890123456',
+            budget_range='5lakh_10lakh',
+            project_category='environment_cleanliness',
+            proposed_collaboration='project_sponsorship',
+            message='Tree plantation and green zone creation.',
+            status='new',
+        )
+
+        self.client.force_login(self.admin_user)
+        update_payload = {
+            'status': 'under_review',
+            'proposed_budget': '250000.00',
+            'project_description': 'Approved scope for 2,500 tree plantations and 4 cleanliness drives.',
+            'admin_notes': 'Executive committee reviewed MoU draft.',
+        }
+        res = self.client.post(reverse('admin_update_csr_status', kwargs={'csr_id': csr.id}), data=update_payload)
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse('admin_dashboard'))
+
+        csr.refresh_from_db()
+        self.assertEqual(csr.status, 'under_review')
+        self.assertEqual(str(csr.proposed_budget), '250000.00')
+        self.assertEqual(csr.reviewed_by, self.admin_user)
+
+    def test_coordinator_forbidden_from_updating_csr_status(self):
+        csr = CSREnquiry.objects.create(
+            company_name='Local Trust',
+            contact_person='Trustee',
+            designation='Secretary',
+            email='trustee@example.com',
+            phone='9823012345',
+            message='Collaboration inquiry.',
+            status='new',
+        )
+        self.client.force_login(self.coordinator_user)
+        res = self.client.post(reverse('admin_update_csr_status', kwargs={'csr_id': csr.id}), data={'status': 'approved'})
+        self.assertIn(res.status_code, [302, 403])
+        csr.refresh_from_db()
+        self.assertEqual(csr.status, 'new')
+
+
+class VolunteerRegistrationAndSkillsTests(TestCase):
+    """
+    Test suite for public volunteer signup, skills field, and security boundaries.
+    """
+    def setUp(self):
+        self.client = Client()
+
+    def test_registration_with_skills_and_auto_pending(self):
+        payload = {
+            'full_name': 'Meera Joshi',
+            'email': 'meera.joshi@example.com',
+            'phone': '9185088277',
+            'city': 'TV Center, Chhatrapati Sambhajinagar',
+            'availability': 'every_sunday',
+            'blood_group': 'O+',
+            'occupation': 'Nurse / Healthcare',
+            'skills': 'First Aid, Medical Triaging, Volunteer Coordination',
+            'interests': 'Sunday food drives and health checkup camps',
+            'password': 'SecureVolunteerPassword123!',
+            'password_confirm': 'SecureVolunteerPassword123!',
+            'privacy_consent': True,
+        }
+        res = self.client.post(reverse('register'), data=payload)
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse('volunteer_dashboard'))
+
+        user = User.objects.filter(email='meera.joshi@example.com').first()
+        self.assertIsNotNone(user)
+        self.assertTrue(user.check_password('SecureVolunteerPassword123!'))
+
+        profile = user.profile
+        self.assertEqual(profile.role, 'volunteer')  # Never admin or coordinator
+        self.assertEqual(profile.status, 'pending')
+        self.assertEqual(profile.skills, 'First Aid, Medical Triaging, Volunteer Coordination')
+
+    def test_registration_duplicate_email_prevention(self):
+        User.objects.create_user(
+            username='existing_user',
+            email='duplicate@example.com',
+            password='OldPassword123!'
+        )
+
+        payload = {
+            'full_name': 'Duplicate User',
+            'email': 'duplicate@example.com',
+            'phone': '9185088277',
+            'city': 'Chhatrapati Sambhajinagar',
+            'availability': 'weekends',
+            'password': 'NewPassword123!',
+            'password_confirm': 'NewPassword123!',
+            'privacy_consent': True,
+        }
+        res = self.client.post(reverse('register'), data=payload)
+        self.assertEqual(res.status_code, 200)
+        self.assertFormError(res.context['form'], 'email', 'An account with this email address already exists. Please log in.')
+
+
+class NotificationFailsafeTests(TestCase):
+    """
+    Test suite for notification dispatch and duplicate reminder prevention.
+    """
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='remind_volunteer',
+            email='remind_volunteer@example.com',
+            password='Password123!'
+        )
+        from datetime import time
+        self.event = Event.objects.create(
+            title='Sunday Blanket Drive',
+            event_date=date.today() + timedelta(days=2),
+            start_time=time(10, 0),
+            location='Railway Station Area',
+            status='upcoming'
+        )
+
+    def test_duplicate_reminder_prevention(self):
+        # First send
+        success1, note1 = send_event_reminder(self.event, self.user)
+        # Should record ReminderLog
+        log = ReminderLog.objects.filter(event=self.event, recipient=self.user).first()
+        self.assertIsNotNone(log)
+        # Simulate status='sent'
+        log.status = 'sent'
+        log.save()
+
+        # Second send without force should skip duplicate
+        success2, note2 = send_event_reminder(self.event, self.user, force=False)
+        self.assertFalse(success2)
+        self.assertIn("Skipping duplicate", note2)
+
 
 
 

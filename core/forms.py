@@ -5,7 +5,8 @@ Validation, Bootstrap widgets, and accessibility attributes.
 
 import re
 from django import forms
-from .models import Volunteer, SupportInquiry, ContactInquiry, ServiceArea
+from .models import Volunteer, SupportInquiry, ContactInquiry, ServiceArea, CSREnquiry
+
 
 
 def validate_indian_phone(value):
@@ -22,7 +23,7 @@ def validate_indian_phone(value):
         clean_val = clean_val[1:]
 
     if not re.match(r'^[6-9]\d{9}$', clean_val):
-        raise forms.ValidationError("Please enter a valid 10-digit Indian contact number (e.g., 9852827771).")
+        raise forms.ValidationError("Please enter a valid 10-digit Indian contact number (e.g., 9185088277).")
     return clean_val
 
 
@@ -52,7 +53,7 @@ class VolunteerForm(forms.ModelForm):
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': '10-digit Mobile Number (e.g. 9852827771)',
+                'placeholder': '10-digit Mobile Number (e.g. 9185088277)',
                 'required': True,
                 'autocomplete': 'tel',
             }),
@@ -117,7 +118,7 @@ class SupportInquiryForm(forms.ModelForm):
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Mobile Number (e.g. 9852827771)',
+                'placeholder': 'Mobile Number (e.g. 9185088277)',
                 'required': True,
             }),
             'email': forms.EmailInput(attrs={
@@ -310,7 +311,7 @@ class VolunteerRegistrationForm(forms.Form):
         max_length=20,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '10-digit mobile number (e.g. 9852827771)',
+            'placeholder': '10-digit mobile number (e.g. 9185088277)',
             'required': True,
             'autocomplete': 'tel',
         })
@@ -343,6 +344,15 @@ class VolunteerRegistrationForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Student / Professional / Healthcare / Other',
+        })
+    )
+    skills = forms.CharField(
+        label="Special Skills & Talents",
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g. Photography, First Aid, Teaching, Driving, Social Media, Logistics',
         })
     )
     interests = forms.CharField(
@@ -440,6 +450,7 @@ class VolunteerRegistrationForm(forms.Form):
         profile.availability = cleaned_data['availability']
         profile.blood_group = cleaned_data.get('blood_group', 'unknown')
         profile.occupation = cleaned_data.get('occupation', '')
+        profile.skills = cleaned_data.get('skills', '')
         profile.interests = cleaned_data.get('interests', '')
         profile.privacy_consent = cleaned_data['privacy_consent']
         profile.save()
@@ -686,4 +697,122 @@ class AnnouncementCreationForm(forms.ModelForm):
             'event': forms.Select(attrs={'class': 'form-select'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
+class CSREnquiryForm(forms.ModelForm):
+    """
+    Public form for corporate organizations and institutions to submit CSR collaboration proposals.
+    """
+    class Meta:
+        model = CSREnquiry
+        fields = [
+            'company_name',
+            'contact_person',
+            'designation',
+            'email',
+            'phone',
+            'budget_range',
+            'project_category',
+            'proposed_collaboration',
+            'message',
+            'privacy_consent',
+        ]
+        widgets = {
+            'company_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Company / Institution / Trust Name',
+                'required': True,
+                'autocomplete': 'organization',
+            }),
+            'contact_person': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Authorized Representative Name',
+                'required': True,
+                'autocomplete': 'name',
+            }),
+            'designation': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. CSR Head / Director / HR Manager / Trustee',
+                'required': True,
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'official.email@company.com',
+                'required': True,
+                'autocomplete': 'email',
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '10-digit Official Phone / Mobile (e.g. 9185088277)',
+                'required': True,
+                'autocomplete': 'tel',
+            }),
+            'budget_range': forms.Select(attrs={
+                'class': 'form-select',
+                'required': True,
+            }),
+            'project_category': forms.Select(attrs={
+                'class': 'form-select',
+                'required': True,
+            }),
+            'proposed_collaboration': forms.Select(attrs={
+                'class': 'form-select',
+                'required': True,
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe your proposed CSR initiative, target timeline, location preferences, or partnership objectives...',
+                'required': True,
+            }),
+            'privacy_consent': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'required': True,
+            }),
+        }
+
+    def clean_phone(self):
+        raw_phone = self.cleaned_data.get('phone')
+        return validate_indian_phone(raw_phone)
+
+    def clean_privacy_consent(self):
+        consent = self.cleaned_data.get('privacy_consent')
+        if not consent:
+            raise forms.ValidationError("You must confirm privacy and collaboration consent to submit an enquiry.")
+        return consent
+
+
+class AdminCSREnquiryUpdateForm(forms.ModelForm):
+    """
+    Admin form to update CSR proposal status, budget, notes, and attach MoU/agreements.
+    """
+    class Meta:
+        model = CSREnquiry
+        fields = [
+            'status',
+            'project_description',
+            'proposed_budget',
+            'supporting_document',
+            'admin_notes',
+        ]
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-select', 'required': True}),
+            'project_description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Official project scope, deliverables, or executive summary...',
+            }),
+            'proposed_budget': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'placeholder': 'Sanctioned / Proposed Amount in INR',
+            }),
+            'supporting_document': forms.FileInput(attrs={'class': 'form-control'}),
+            'admin_notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Internal notes, contact dates, or committee review remarks...',
+            }),
+        }
+
 

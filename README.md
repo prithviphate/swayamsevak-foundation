@@ -3,6 +3,10 @@
 
 An institutional, responsive, accessible, and database-backed full-stack website developed for **Swayamsevak Foundation**, Chhatrapati Sambhajinagar, Maharashtra, India.
 
+- 🌐 **Live Website (Vercel)**: [https://swayamsevak-foundation-lp3k-beta.vercel.app/](https://swayamsevak-foundation-lp3k-beta.vercel.app/)
+- 📂 **GitHub Repository**: [https://github.com/prithviphate/swayamsevak-foundation](https://github.com/prithviphate/swayamsevak-foundation)
+- 🧪 **Test Suite**: 55 Automated Unit Tests (100% Passing)
+
 ---
 
 ## 1. Foundation Information & Official Details
@@ -15,7 +19,7 @@ An institutional, responsive, accessible, and database-backed full-stack website
 | **Established** | January 2024 |
 | **City & State** | Chhatrapati Sambhajinagar, Maharashtra, India |
 | **Founder / President** | **Om Vinod Dhadbale** |
-| **Phone** | **9852827771** |
+| **Phone** | **9185088277** |
 | **Email** | **swayamsevakfoundation24@gmail.com** |
 | **Address** | TV Center, Chhatrapati Sambhajinagar, 431001 |
 | **Official Languages** | English and Marathi |
@@ -235,7 +239,15 @@ Run the comprehensive unit test suite covering models, validation, views, biling
 python manage.py test
 ```
 
-All 30 automated test cases will run and verify project integrity (including model constraints, phone number validation, bilingual switching, role-based dashboard access, volunteer approval workflows, IDOR isolation, attendance marking, report reviews, brute-force throttling, and cryptographic password recovery).
+All 55 automated test cases will run and verify project integrity:
+- Model constraints, singleton foundation settings, activity categories, and phone validation.
+- Bilingual switching (English & Marathi) across navigation, initiatives, impact, and forms.
+- Public volunteer registration with unique email checks, optional skills capture, and pending status security enforcement.
+- Role-based dashboard access control (`@admin_required`, `@coordinator_required`, `@volunteer_required`) and IDOR isolation.
+- CSR Funding & Corporate Partnerships module (enquiry submissions, phone validation, admin status workflow, document attachments, and 8 focus categories).
+- Notification dispatch fail-safes (welcome emails, status updates, event reminders, and duplicate reminder prevention via `ReminderLog`).
+- Coordinator attendance marking, post-drive report submissions, admin approval workflows, and audit trail logging.
+
 
 ---
 
@@ -244,7 +256,7 @@ All 30 automated test cases will run and verify project integrity (including mod
 In strict compliance with documentation integrity:
 1. **Online Payment Gateway (Razorpay / Stripe / UPI QR)**:
    - *Status*: Documented & Pending official NGO institutional banking documentation.
-   - *Current Implementation*: Public supporters submit in-kind pledges or coordinate directly with the founder via official phone (9852827771) or WhatsApp.
+   - *Current Implementation*: Public supporters submit in-kind pledges or coordinate directly with the founder via official phone (9185088277) or WhatsApp.
 2. **Facebook Page**:
    - *Status*: Official account pending creation.
 3. **SMS / WhatsApp Cloud API Notifications**:

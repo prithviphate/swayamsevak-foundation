@@ -10,9 +10,9 @@
         </span>
         <span class="d-none d-md-inline">|</span>
         <span>
-          <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="text-decoration-none">
+          <a href="tel:{{ foundation.phone|default:'9185088277' }}" class="text-decoration-none">
             <i class="bi bi-telephone-fill text-warning me-1"></i>
-            {{ foundation.phone|default:"9852827771" }}
+            {{ foundation.phone|default:"9185088277" }}
           </a>
         </span>
         <span class="d-none d-lg-inline">|</span>
@@ -139,6 +139,11 @@
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name in 'impact achievements' %}active{% endif %}" href="{% url 'impact' %}">
             {% if is_mr %}कार्य व प्रभाव{% else %}Our Impact{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'csr' %}active{% endif %}" href="{% url 'csr' %}">
+            {% if is_mr %}सीएसआर भागीदारी{% else %}CSR Partnerships{% endif %}
           </a>
         </li>
         <li class="nav-item">

@@ -27,6 +27,7 @@ from .models import (
     Achievement,
     Collaboration,
     ReminderLog,
+    CSREnquiry,
 )
 
 
@@ -684,3 +685,89 @@ class AuditLogAdmin(admin.ModelAdmin):
 class LoginAttemptAdmin(admin.ModelAdmin):
     list_display = ('username_or_email', 'ip_address', 'failed_attempts', 'last_attempt', 'locked_until')
     search_fields = ('username_or_email', 'ip_address')
+
+
+@admin.register(CSREnquiry)
+class CSREnquiryAdmin(admin.ModelAdmin):
+    list_display = (
+        'company_name',
+        'contact_person',
+        'email',
+        'phone',
+        'project_category',
+        'budget_range',
+        'status_badge',
+        'created_at',
+    )
+    list_filter = ('status', 'project_category', 'budget_range', 'created_at')
+    search_fields = ('company_name', 'contact_person', 'email', 'phone', 'message', 'admin_notes')
+    readonly_fields = ('created_at', 'updated_at')
+
+    fieldsets = (
+        ("Corporate Entity & Contact", {
+            "fields": (
+                "company_name",
+                "contact_person",
+                "designation",
+                "email",
+                "phone",
+                "privacy_consent",
+            )
+        }),
+        ("Proposal Details", {
+            "fields": (
+                "project_category",
+                "budget_range",
+                "proposed_collaboration",
+                "message",
+            )
+        }),
+        ("Administrative Review & Execution", {
+            "fields": (
+                "status",
+                "project_description",
+                "proposed_budget",
+                "supporting_document",
+                "admin_notes",
+                "reviewed_by",
+                "created_at",
+                "updated_at",
+            )
+        }),
+    )
+
+    def status_badge(self, obj):
+        colors = {
+            'new': '#0d6efd',
+            'under_review': '#ffc107',
+            'contacted': '#0dcaf0',
+            'approved': '#198754',
+            'rejected': '#dc3545',
+        }
+        text_color = '#000' if obj.status in ['under_review', 'contacted'] else '#fff'
+        return format_html(
+            '<span style="background-color: {}; color: {}; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;">{}</span>',
+            colors.get(obj.status, '#6c757d'),
+            text_color,
+            obj.get_status_display()
+        )
+    status_badge.short_description = "Status"
+
+    @admin.action(description="Mark selected as Under Review")
+    def mark_under_review(self, request, queryset):
+        queryset.update(status='under_review', reviewed_by=request.user)
+
+    @admin.action(description="Mark selected as Contacted")
+    def mark_contacted(self, request, queryset):
+        queryset.update(status='contacted', reviewed_by=request.user)
+
+    @admin.action(description="Mark selected as Approved")
+    def mark_approved(self, request, queryset):
+        queryset.update(status='approved', reviewed_by=request.user)
+
+    @admin.action(description="Mark selected as Rejected")
+    def mark_rejected(self, request, queryset):
+        queryset.update(status='rejected', reviewed_by=request.user)
+
+    actions = [mark_under_review, mark_contacted, mark_approved, mark_rejected]
+

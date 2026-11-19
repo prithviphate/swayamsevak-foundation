@@ -20,8 +20,8 @@
         </p>
       </div>
       <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-        <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="btn btn-primary-custom">
-          <i class="bi bi-telephone-fill me-1"></i> Call Founder: {{ foundation.phone|default:"9852827771" }}
+        <a href="tel:{{ foundation.phone|default:'9185088277' }}" class="btn btn-primary-custom">
+          <i class="bi bi-telephone-fill me-1"></i> Call Founder: {{ foundation.phone|default:"9185088277" }}
         </a>
       </div>
     </div>
@@ -96,7 +96,7 @@
                   Mobile Number <span class="text-danger">*</span>
                 </label>
                 {{ form.phone }}
-                <div class="form-text small">10-digit Indian number (e.g. 9852827771)</div>
+                <div class="form-text small">10-digit Indian number (e.g. 9185088277)</div>
                 {% if form.phone.errors %}
                   <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
                 {% endif %}
@@ -208,7 +208,7 @@
           </p>
           <div class="small">
             <div class="mb-2"><strong class="text-dark">Founder & President:</strong> {{ foundation.founder_president|default:"Om Vinod Dhadbale" }}</div>
-            <div class="mb-2"><strong class="text-dark">Official Phone:</strong> <a href="tel:{{ foundation.phone|default:'9852827771' }}" class="fw-bold text-primary">{{ foundation.phone|default:"9852827771" }}</a></div>
+            <div class="mb-2"><strong class="text-dark">Official Phone:</strong> <a href="tel:{{ foundation.phone|default:'9185088277' }}" class="fw-bold text-primary">{{ foundation.phone|default:"9185088277" }}</a></div>
             <div class="mb-2"><strong class="text-dark">Email:</strong> <a href="mailto:{{ foundation.email|default:'swayamsevakfoundation24@gmail.com' }}">{{ foundation.email|default:"swayamsevakfoundation24@gmail.com" }}</a></div>
             <div><strong class="text-dark">Location:</strong> {{ foundation.address|default:"TV Center, Chhatrapati Sambhajinagar, 431001" }}</div>
           </div>
