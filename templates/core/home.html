@@ -93,12 +93,12 @@
           <div class="mb-3 position-relative rounded-4 overflow-hidden border shadow-sm">
             <div id="heroActivityCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3500">
               <div class="carousel-indicators mb-2">
-                {% for photo in gallery_photos|slice:":5" %}
-                <button type="button" data-bs-target="#heroActivityCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}" style="width: 20px; height: 3px; border-radius: 2px;"></button>
+                {% for photo in gallery_photos %}
+                <button type="button" data-bs-target="#heroActivityCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}" style="width: 14px; height: 3px; border-radius: 2px;"></button>
                 {% endfor %}
               </div>
               <div class="carousel-inner" style="height: 180px;">
-                {% for photo in gallery_photos|slice:":5" %}
+                {% for photo in gallery_photos %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %} h-100 position-relative" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#homeImageLightboxModal" data-img-url="{{ photo.photo_url|default:photo.file.url }}" data-img-title="{% if is_mr %}{{ photo.title_mr|default:photo.title }}{% else %}{{ photo.title }}{% endif %}" data-img-caption="{% if is_mr and photo.caption_mr %}{{ photo.caption_mr }}{% else %}{{ photo.caption }}{% endif %}" data-img-cat="{% if photo.category %}{% if is_mr %}{{ photo.category.name_mr }}{% else %}{{ photo.category.name }}{% endif %}{% else %}Foundation Drive{% endif %}">
                   <img src="{{ photo.photo_url|default:photo.file.url }}" alt="{{ photo.title }}" class="d-block w-100 h-100" style="object-fit: cover;">
                   <div class="position-absolute bottom-0 start-0 end-0 p-2 text-white" style="background: linear-gradient(to top, rgba(18,22,28,0.92) 0%, rgba(18,22,28,0.45) 60%, transparent 100%);">

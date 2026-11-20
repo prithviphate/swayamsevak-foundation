@@ -91,7 +91,7 @@ def home_view(request):
     settings = FoundationSetting.get_settings()
     activity_categories = ActivityCategory.objects.filter(is_active=True).order_by('order')
     featured_activities = Activity.objects.filter(is_published=True, is_active=True).select_related('category', 'service_area').order_by('order', '-created_at')[:6]
-    gallery_media = GalleryMedia.objects.filter(is_published=True).order_by('order', '-created_at')[:8]
+    gallery_media = GalleryMedia.objects.filter(is_published=True).order_by('order', '-created_at')[:9]
     gallery_photos = list(GalleryMedia.objects.filter(is_published=True, media_type='photo').order_by('order', '-created_at'))
     marquee_photos = []
     if gallery_photos:
