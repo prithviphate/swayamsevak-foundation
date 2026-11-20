@@ -60,13 +60,7 @@ class Command(BaseCommand):
             rel_image_path = f"gallery/{filename}"
 
             # Auto-detect context from filename keywords
-            if any(k in name_lower for k in ['mashal', 'yatra', 'shiv']):
-                title = "Shiv Janmotsav Grand Mashal Yatra"
-                title_mr = "शिवजन्मोत्सव भव्य-दिव्य मशाल यात्रा"
-                category = categories.get('other-social-service-activities') or categories.get('awareness-campaigns')
-                caption = "Grand Mashal Yatra from Mondha Naka to Kranti Chowk organized by Swayamsevak Foundation."
-                caption_mr = "मोंढा नाका ते क्रांती चौक स्वयंसेवक फाऊंडेशन, छत्रपती संभाजीनगर आयोजित भव्य-दिव्य मशाल यात्रा."
-            elif any(k in name_lower for k in ['food', 'annadan', 'meal']):
+            if any(k in name_lower for k in ['food', 'annadan', 'meal']):
                 title = "Sunday Hunger Relief Food Distribution Drive"
                 title_mr = "दर रविवारी अन्नदान उपक्रम"
                 category = categories.get('food-donation')
