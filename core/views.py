@@ -114,6 +114,7 @@ def home_view(request):
         'activity_categories': activity_categories,
         'activities': featured_activities,
         'gallery_media': gallery_media,
+        'gallery_photos': gallery_photos,
         'marquee_photos': marquee_photos,
         'latest_photo': latest_photo,
         'upcoming_events': upcoming_events,

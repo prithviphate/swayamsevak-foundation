@@ -850,6 +850,37 @@ a:hover {
   text-overflow: ellipsis;
 }
 
+/* Hero Activity Carousel Animation */
+#heroActivityCarousel .carousel-item {
+  transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+  overflow: hidden;
+}
+
+#heroActivityCarousel .carousel-item.active img {
+  animation: heroKenBurns 5s ease-out forwards;
+}
+
+@keyframes heroKenBurns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.07);
+  }
+}
+
+#heroActivityCarousel .carousel-indicators [data-bs-target] {
+  background-color: #f59e0b;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, width 0.3s ease;
+}
+
+#heroActivityCarousel .carousel-indicators .active {
+  opacity: 1;
+  width: 28px !important;
+  background-color: #f59e0b;
+}
+
 /* Lightbox Modal custom image styling */
 .lightbox-modal-img {
   max-height: 80vh;
