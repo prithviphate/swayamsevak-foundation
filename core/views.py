@@ -91,7 +91,17 @@ def home_view(request):
     settings = FoundationSetting.get_settings()
     activity_categories = ActivityCategory.objects.filter(is_active=True).order_by('order')
     featured_activities = Activity.objects.filter(is_published=True, is_active=True).select_related('category', 'service_area').order_by('order', '-created_at')[:6]
-    gallery_media = GalleryMedia.objects.filter(is_published=True).order_by('order', '-created_at')[:6]
+    gallery_media = GalleryMedia.objects.filter(is_published=True).order_by('order', '-created_at')[:8]
+    gallery_photos = list(GalleryMedia.objects.filter(is_published=True, media_type='photo').order_by('order', '-created_at'))
+    marquee_photos = []
+    if gallery_photos:
+        marquee_photos = gallery_photos[:]
+        while len(marquee_photos) < 8:
+            marquee_photos.extend(gallery_photos)
+        # Duplicate once more for smooth infinite CSS marquee loop
+        marquee_photos = marquee_photos + marquee_photos
+
+    latest_photo = gallery_photos[0] if gallery_photos else None
     upcoming_events = Event.objects.filter(is_published=True, event_date__gte=date.today(), status='upcoming').order_by('event_date', 'start_time')[:3]
     impact_stats = ImpactStatistic.objects.filter(is_published=True, verification_status='verified').order_by('order')[:4]
     achievements_preview = Achievement.objects.filter(is_published=True, verification_status='verified').order_by('order', '-date_received')[:3]
@@ -104,6 +114,8 @@ def home_view(request):
         'activity_categories': activity_categories,
         'activities': featured_activities,
         'gallery_media': gallery_media,
+        'marquee_photos': marquee_photos,
+        'latest_photo': latest_photo,
         'upcoming_events': upcoming_events,
         'impact_stats': impact_stats,
         'achievements_preview': achievements_preview,

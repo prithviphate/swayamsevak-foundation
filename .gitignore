@@ -19,6 +19,8 @@ staticfiles/
 staticfiles_build/
 media/*
 !media/logos/
+!media/gallery/
+!media/activities/
 
 # Environment Variables
 .env

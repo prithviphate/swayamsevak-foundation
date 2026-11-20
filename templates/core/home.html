@@ -88,6 +88,19 @@
             </div>
           </div>
 
+          {% if latest_photo %}
+          <div class="mb-3 position-relative rounded-3 overflow-hidden border shadow-sm" style="height: 130px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#homeImageLightboxModal" data-img-url="{{ latest_photo.photo_url|default:latest_photo.file.url }}" data-img-title="{% if is_mr %}{{ latest_photo.title_mr|default:latest_photo.title }}{% else %}{{ latest_photo.title }}{% endif %}" data-img-caption="{% if is_mr and latest_photo.caption_mr %}{{ latest_photo.caption_mr }}{% else %}{{ latest_photo.caption }}{% endif %}" data-img-cat="{% if latest_photo.category %}{% if is_mr %}{{ latest_photo.category.name_mr }}{% else %}{{ latest_photo.category.name }}{% endif %}{% endif %}">
+            <img src="{{ latest_photo.photo_url|default:latest_photo.file.url }}" alt="{{ latest_photo.title }}" style="width: 100%; height: 100%; object-fit: cover;" class="card-img-top">
+            <div class="position-absolute bottom-0 start-0 end-0 p-2 text-white" style="background: linear-gradient(to top, rgba(18,22,28,0.92) 0%, rgba(18,22,28,0.4) 60%, transparent 100%);">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-warning text-dark extra-small"><i class="bi bi-camera-fill me-1"></i> {% if is_mr %}ताज्या उपक्रमाचे छायाचित्र{% else %}Documented Drive{% endif %}</span>
+                <span class="extra-small text-white-50"><i class="bi bi-arrows-fullscreen me-1"></i>{% if is_mr %}पहा{% else %}View{% endif %}</span>
+              </div>
+              <div class="small fw-bold text-truncate mt-1 text-white">{% if is_mr %}{{ latest_photo.title_mr|default:latest_photo.title }}{% else %}{{ latest_photo.title }}{% endif %}</div>
+            </div>
+          </div>
+          {% endif %}
+
           <div class="p-3 bg-primary-subtle text-primary-emphasis rounded border border-primary-subtle small">
             <i class="bi bi-quote fs-5 me-1 align-middle"></i>
             <strong>Core Belief:</strong> "{{ foundation.belief|default:'Humanity is the greatest service.' }}"
@@ -97,6 +110,61 @@
     </div>
   </div>
 </section>
+
+<!-- Live Foundation Activity Photo Showcase (Continuous Animated Marquee Ribbon) -->
+{% if marquee_photos %}
+<section class="activity-marquee-section py-3 border-top border-bottom overflow-hidden shadow-xs">
+  <div class="container-fluid px-3">
+    <div class="d-flex align-items-center justify-content-between px-2 mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="pulse-indicator"></span>
+        <span class="fw-bold text-uppercase tracking-wider small text-dark">
+          {% if is_mr %}प्रत्यक्ष उपक्रम क्षणचित्रे • छ. संभाजीनगर{% else %}Foundation Activities in Action • Chhatrapati Sambhajinagar{% endif %}
+        </span>
+      </div>
+      <a href="{% url 'gallery' %}" class="small text-primary fw-semibold text-decoration-none">
+        {% if is_mr %}गॅलरी पहा{% else %}View Full Gallery{% endif %} <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <!-- Continuous Animated Photo Track (Pause on Hover) -->
+    <div class="foundation-marquee-wrapper py-1" title="Hover to pause animation, click any photo to zoom">
+      <div class="foundation-marquee-track">
+        {% for photo in marquee_photos %}
+        <div class="marquee-photo-card" data-bs-toggle="modal" data-bs-target="#homeImageLightboxModal" data-img-url="{{ photo.photo_url|default:photo.file.url }}" data-img-title="{% if is_mr %}{{ photo.title_mr|default:photo.title }}{% else %}{{ photo.title }}{% endif %}" data-img-caption="{% if is_mr and photo.caption_mr %}{{ photo.caption_mr }}{% else %}{{ photo.caption }}{% endif %}" data-img-cat="{% if photo.category %}{% if is_mr %}{{ photo.category.name_mr }}{% else %}{{ photo.category.name }}{% endif %}{% else %}Authentic Drive{% endif %}">
+          <div class="marquee-photo-img-wrap">
+            <img src="{{ photo.photo_url|default:photo.file.url }}" alt="{{ photo.title }}" class="marquee-photo-img" loading="lazy">
+            <div class="marquee-photo-overlay">
+              {% if photo.category %}
+                <span class="marquee-badge marquee-badge-gold">
+                  <i class="bi {{ photo.category.icon|default:'bi-patch-check-fill' }} me-1"></i>
+                  {% if is_mr %}{{ photo.category.name_mr }}{% else %}{{ photo.category.name }}{% endif %}
+                </span>
+              {% else %}
+                <span class="marquee-badge">
+                  <i class="bi bi-patch-check-fill text-warning me-1"></i> Authentic
+                </span>
+              {% endif %}
+              <span class="marquee-badge bg-white text-dark shadow-sm">
+                <i class="bi bi-zoom-in"></i>
+              </span>
+            </div>
+          </div>
+          <div class="marquee-photo-content">
+            <div class="marquee-photo-title">
+              {% if is_mr %}{{ photo.title_mr|default:photo.title }}{% else %}{{ photo.title }}{% endif %}
+            </div>
+            <div class="marquee-photo-sub">
+              {% if is_mr and photo.caption_mr %}{{ photo.caption_mr }}{% else %}{{ photo.caption|default:"Swayamsevak Foundation Social Service" }}{% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <!-- Our Story Spotlight Section -->
 <section class="py-5 bg-white border-bottom">
@@ -623,20 +691,36 @@
     <div class="row g-4">
       {% for item in gallery_media %}
       <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border shadow-sm rounded-3 overflow-hidden bg-white">
-          {% if item.media_type == 'photo' and item.file %}
-            <img src="{{ item.file.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
+        <div class="card h-100 border shadow-sm rounded-4 overflow-hidden bg-white position-relative" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          {% if item.media_type == 'photo' and item.photo_url %}
+            <div style="height: 220px; overflow: hidden; position: relative; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#homeImageLightboxModal" data-img-url="{{ item.photo_url }}" data-img-title="{% if is_mr %}{{ item.title_mr|default:item.title }}{% else %}{{ item.title }}{% endif %}" data-img-caption="{% if is_mr and item.caption_mr %}{{ item.caption_mr }}{% else %}{{ item.caption }}{% endif %}" data-img-cat="{% if item.category %}{% if is_mr %}{{ item.category.name_mr }}{% else %}{{ item.category.name }}{% endif %}{% else %}Drive{% endif %}">
+              <img src="{{ item.photo_url }}" class="card-img-top w-100 h-100" alt="{{ item.title }}" style="object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1.0)'">
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-dark text-white bg-opacity-75"><i class="bi bi-arrows-fullscreen"></i></span>
+              </div>
+            </div>
           {% elif item.media_type == 'video' and item.video_url %}
             <div class="ratio ratio-16x9">
               <iframe src="{{ item.video_url }}" title="{{ item.title }}" allowfullscreen></iframe>
             </div>
           {% endif %}
           <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              {% if item.category %}
+                <span class="badge bg-light text-dark border extra-small">
+                  <i class="bi {{ item.category.icon|default:'bi-tag' }} text-warning me-1"></i>
+                  {% if is_mr %}{{ item.category.name_mr }}{% else %}{{ item.category.name }}{% endif %}
+                </span>
+              {% endif %}
+              <span class="badge {% if item.media_type == 'photo' %}bg-info-subtle text-info{% else %}bg-danger-subtle text-danger{% endif %} border extra-small">
+                {{ item.get_media_type_display }}
+              </span>
+            </div>
             <h5 class="fw-bold mb-1 fs-6">
               {% if is_mr %}{{ item.title_mr }}{% else %}{{ item.title }}{% endif %}
             </h5>
-            {% if item.caption %}
-            <p class="text-muted small mb-0">{{ item.caption|truncatewords:15 }}</p>
+            {% if item.caption or item.caption_mr %}
+            <p class="text-muted small mb-0">{% if is_mr and item.caption_mr %}{{ item.caption_mr|truncatewords:15 }}{% else %}{{ item.caption|truncatewords:15 }}{% endif %}</p>
             {% endif %}
           </div>
         </div>
@@ -822,6 +906,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
     counters.forEach(c => observer.observe(c));
   }
+
+  // Home Lightbox Modal Handler
+  const lightboxModal = document.getElementById('homeImageLightboxModal');
+  if (lightboxModal) {
+    lightboxModal.addEventListener('show.bs.modal', function(event) {
+      const button = event.relatedTarget;
+      if (!button) return;
+      const imgUrl = button.getAttribute('data-img-url');
+      const imgTitle = button.getAttribute('data-img-title');
+      const imgCaption = button.getAttribute('data-img-caption');
+      const imgCat = button.getAttribute('data-img-cat') || 'Foundation Service';
+
+      const modalTitle = lightboxModal.querySelector('#homeImageLightboxLabel');
+      const modalImg = lightboxModal.querySelector('#lightboxModalImg');
+      const modalCaption = lightboxModal.querySelector('#lightboxModalCaption');
+      const modalFull = lightboxModal.querySelector('#lightboxModalFull');
+      const modalCat = lightboxModal.querySelector('#lightboxModalCat');
+
+      if (modalTitle) modalTitle.textContent = imgTitle || 'Activity Photograph';
+      if (modalImg) modalImg.src = imgUrl || '';
+      if (modalCaption) modalCaption.textContent = imgCaption || '';
+      if (modalFull) modalFull.href = imgUrl || '#';
+      if (modalCat) modalCat.textContent = imgCat;
+    });
+  }
 });
 </script>
+
+<!-- Home Image Lightbox Modal -->
+<div class="modal fade" id="homeImageLightboxModal" tabindex="-1" aria-labelledby="homeImageLightboxLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+      <div class="modal-header border-0 bg-dark text-white py-2 px-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-warning text-dark extra-small" id="lightboxModalCat">Activity</span>
+          <h6 class="modal-title fs-6 mb-0 text-white" id="homeImageLightboxLabel">Photo Preview</h6>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 text-center bg-black">
+        <img id="lightboxModalImg" src="" alt="Foundation Activity" class="lightbox-modal-img img-fluid">
+      </div>
+      <div class="modal-footer bg-light border-0 py-2 px-3 d-flex justify-content-between align-items-center">
+        <p class="text-secondary small mb-0" id="lightboxModalCaption"></p>
+        <a id="lightboxModalFull" href="" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-box-arrow-up-right me-1"></i> {% if is_mr %}पूर्ण आकारात पहा{% else %}Full Size{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

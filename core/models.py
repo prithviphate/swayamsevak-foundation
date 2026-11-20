@@ -413,6 +413,16 @@ class Activity(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def photo_url(self):
+        """Returns valid media or static URL for the image"""
+        if self.image:
+            try:
+                return self.image.url
+            except Exception:
+                pass
+        return ""
+
 
 class Volunteer(models.Model):
     """
@@ -701,6 +711,21 @@ class GalleryMedia(models.Model):
 
     def __str__(self):
         return f"[{self.get_media_type_display()}] {self.title}"
+
+    @property
+    def file(self):
+        """Compatibility property for templates accessing item.file"""
+        return self.image
+
+    @property
+    def photo_url(self):
+        """Returns valid media or static URL for the image"""
+        if self.image:
+            try:
+                return self.image.url
+            except Exception:
+                pass
+        return ""
 
 
 class UserProfile(models.Model):

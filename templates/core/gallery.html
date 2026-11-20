@@ -59,15 +59,45 @@
 <section class="py-5" style="background-color: #fdfbf7;">
   <div class="container py-3">
 
+    <!-- Admin & Coordinator Quick Action Notice -->
+    {% if user.is_authenticated and user.profile.is_coordinator_or_above %}
+    <div class="alert alert-info border-info-subtle rounded-4 p-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-camera-fill text-info fs-4"></i>
+        <div class="small">
+          <strong>{% if is_mr %}फोटो व्यवस्थापन{% else %}Media Management{% endif %}:</strong> 
+          {% if is_mr %}
+            नवीन उपक्रम फोटो जोडण्यासाठी तुम्ही <code>static/images/gallery/</code> फोल्डरमध्ये फोटो टाकून सिंक करू शकता किंवा Admin पॅनेलमधून थेट अपलोड करू शकता.
+          {% else %}
+            To add new photos, place files in <code>static/images/gallery/</code> and run <code>python manage.py sync_gallery</code>, or upload directly via the Admin Dashboard.
+          {% endif %}
+        </div>
+      </div>
+      <a href="{% url 'admin:core_gallerymedia_changelist' %}" class="btn btn-sm btn-info text-white rounded-pill px-3" target="_blank">
+        <i class="bi bi-plus-circle me-1"></i> {% if is_mr %}फोटो अपलोड करा{% else %}Upload Photo{% endif %}
+      </a>
+    </div>
+    {% endif %}
+
     {% if gallery_media %}
     <div class="row g-4">
       {% for item in gallery_media %}
       <div class="col-lg-4 col-md-6">
-        <div class="card h-100 border shadow-sm rounded-4 overflow-hidden bg-white">
-          {% if item.media_type == 'photo' and item.file %}
-            <a href="{{ item.file.url }}" target="_blank" rel="noopener noreferrer">
-              <img src="{{ item.file.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 240px; object-fit: cover;">
-            </a>
+        <div class="card h-100 border shadow-sm rounded-4 overflow-hidden bg-white position-relative" style="transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;">
+          {% if item.media_type == 'photo' and item.photo_url %}
+            <div style="height: 250px; overflow: hidden; position: relative; cursor: pointer; background-color: #f8f6f0;"
+                 data-bs-toggle="modal" 
+                 data-bs-target="#galleryLightboxModal"
+                 data-img-url="{{ item.photo_url }}"
+                 data-img-title="{% if is_mr %}{{ item.title_mr|default:item.title }}{% else %}{{ item.title }}{% endif %}"
+                 data-img-caption="{% if is_mr and item.caption_mr %}{{ item.caption_mr }}{% else %}{{ item.caption }}{% endif %}"
+                 data-img-cat="{% if item.category %}{% if is_mr %}{{ item.category.name_mr }}{% else %}{{ item.category.name }}{% endif %}{% else %}Foundation Service{% endif %}"
+                 title="Click to zoom in">
+              <img src="{{ item.photo_url }}" class="card-img-top w-100 h-100" alt="{{ item.title }}" style="object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1.0)'">
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-dark bg-opacity-75 text-white shadow-sm"><i class="bi bi-zoom-in me-1"></i> Preview</span>
+              </div>
+            </div>
           {% elif item.media_type == 'video' and item.video_url %}
             <div class="ratio ratio-16x9">
               <iframe src="{{ item.video_url }}" title="{{ item.title }}" allowfullscreen></iframe>
@@ -78,7 +108,7 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
               {% if item.category %}
                 <span class="badge bg-light text-dark border extra-small">
-                  <i class="bi {{ item.category.icon }} me-1 text-warning"></i>
+                  <i class="bi {{ item.category.icon|default:'bi-tag-fill' }} me-1 text-warning"></i>
                   {% if is_mr %}{{ item.category.name_mr }}{% else %}{{ item.category.name }}{% endif %}
                 </span>
               {% elif item.activity %}
@@ -87,14 +117,14 @@
                 </span>
               {% endif %}
 
-              <span class="badge {% if item.media_type == 'photo' %}bg-info-subtle text-info{% else %}bg-danger-subtle text-danger{% endif %} border">
+              <span class="badge {% if item.media_type == 'photo' %}bg-info-subtle text-info{% else %}bg-danger-subtle text-danger{% endif %} border extra-small">
                 <i class="bi {% if item.media_type == 'photo' %}bi-camera-fill{% else %}bi-camera-video-fill{% endif %} me-1"></i>
                 {{ item.get_media_type_display }}
               </span>
             </div>
 
             <h5 class="fw-bold fs-6 mb-1 text-dark">
-              {% if is_mr %}{{ item.title_mr }}{% else %}{{ item.title }}{% endif %}
+              {% if is_mr %}{{ item.title_mr|default:item.title }}{% else %}{{ item.title }}{% endif %}
             </h5>
 
             {% if item.caption or item.caption_mr %}
@@ -140,10 +170,62 @@
     <div class="mt-5 p-4 bg-white rounded-4 border shadow-sm text-center">
       <div class="d-inline-flex align-items-center gap-2 text-muted small">
         <i class="bi bi-shield-check text-success fs-5"></i>
-        <span><strong>Authenticity Policy:</strong> Swayamsevak Foundation does not use stock photos or artificial placeholders as authentic imagery. Authorized administrators manage and publish genuine verified media directly.</span>
+        <span><strong>Authenticity Policy:</strong> Swayamsevak Foundation exhibits only authentic photographs and videos captured during actual social drives.</span>
       </div>
     </div>
 
   </div>
 </section>
+
+<!-- Gallery Image Lightbox Modal -->
+<div class="modal fade" id="galleryLightboxModal" tabindex="-1" aria-labelledby="galleryLightboxModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+      <div class="modal-header border-0 bg-dark text-white py-2 px-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-warning text-dark extra-small" id="galleryModalCat">Activity</span>
+          <h6 class="modal-title fs-6 mb-0 text-white" id="galleryLightboxModalLabel">Photo View</h6>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 text-center bg-black">
+        <img id="galleryModalImg" src="" alt="Foundation Activity" class="lightbox-modal-img img-fluid">
+      </div>
+      <div class="modal-footer bg-light border-0 py-2 px-3 d-flex justify-content-between align-items-center">
+        <p class="text-secondary small mb-0" id="galleryModalCaption"></p>
+        <a id="galleryModalFull" href="" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-box-arrow-up-right me-1"></i> {% if is_mr %}पूर्ण आकारात उघडा{% else %}Open Full Size{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const galleryModal = document.getElementById('galleryLightboxModal');
+  if (galleryModal) {
+    galleryModal.addEventListener('show.bs.modal', function(event) {
+      const button = event.relatedTarget;
+      if (!button) return;
+      const imgUrl = button.getAttribute('data-img-url');
+      const imgTitle = button.getAttribute('data-img-title');
+      const imgCaption = button.getAttribute('data-img-caption');
+      const imgCat = button.getAttribute('data-img-cat') || 'Foundation Drive';
+
+      const modalTitle = galleryModal.querySelector('#galleryLightboxModalLabel');
+      const modalImg = galleryModal.querySelector('#galleryModalImg');
+      const modalCaption = galleryModal.querySelector('#galleryModalCaption');
+      const modalFull = galleryModal.querySelector('#galleryModalFull');
+      const modalCat = galleryModal.querySelector('#galleryModalCat');
+
+      if (modalTitle) modalTitle.textContent = imgTitle || 'Activity Photograph';
+      if (modalImg) modalImg.src = imgUrl || '';
+      if (modalCaption) modalCaption.textContent = imgCaption || '';
+      if (modalFull) modalFull.href = imgUrl || '#';
+      if (modalCat) modalCat.textContent = imgCat;
+    });
+  }
+});
+</script>
 {% endblock %}

@@ -690,3 +690,182 @@ a:hover {
   background-color: #f0fdf4;
   border-left-color: #22c55e;
 }
+
+/* ==========================================================================
+   Foundation Activity Photos - Continuous Marquee & Showcase Animations
+   ========================================================================== */
+
+/* Pulsing Live Activity Indicator */
+.pulse-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Marquee Container with edge fading gradients */
+.activity-marquee-section {
+  position: relative;
+  background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
+}
+
+.foundation-marquee-wrapper {
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  position: relative;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+.foundation-marquee-track {
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+  animation: marqueeContinuous 32s linear infinite;
+  will-change: transform;
+}
+
+.foundation-marquee-wrapper:hover .foundation-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeContinuous {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Photo Cards inside Marquee */
+.marquee-photo-card {
+  flex: 0 0 320px;
+  width: 320px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
+.marquee-photo-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  color: inherit;
+}
+
+.marquee-photo-img-wrap {
+  width: 100%;
+  height: 210px;
+  overflow: hidden;
+  position: relative;
+  background-color: #f1ede8;
+}
+
+.marquee-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.marquee-photo-card:hover .marquee-photo-img {
+  transform: scale(1.08);
+}
+
+.marquee-photo-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.marquee-badge {
+  background: rgba(18, 22, 28, 0.82);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+
+.marquee-badge-gold {
+  background: rgba(217, 119, 6, 0.9);
+  color: #ffffff;
+}
+
+.marquee-photo-content {
+  padding: 0.9rem 1rem;
+  background: #ffffff;
+}
+
+.marquee-photo-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.marquee-photo-sub {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Lightbox Modal custom image styling */
+.lightbox-modal-img {
+  max-height: 80vh;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Accessible Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .foundation-marquee-track {
+    animation: none;
+    overflow-x: auto;
+  }
+  .pulse-indicator {
+    animation: none;
+  }
+}
