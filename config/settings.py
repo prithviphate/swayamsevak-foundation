@@ -30,10 +30,12 @@ else:
         host.strip()
         for host in os.getenv(
             "ALLOWED_HOSTS",
-            "localhost,127.0.0.1,.vercel.app,*.vercel.app"
+            "localhost,127.0.0.1,testserver,.vercel.app,*.vercel.app"
         ).split(",")
         if host.strip()
     ]
+    if "testserver" not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append("testserver")
     if ".vercel.app" not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(".vercel.app")
     if "*.vercel.app" not in ALLOWED_HOSTS:
