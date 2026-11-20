@@ -576,7 +576,7 @@
       <div class="col-lg-4 col-md-6">
         <div class="activity-card h-100 d-flex flex-column">
           {% if act.image %}
-            <img src="{{ act.image.url }}" class="img-fluid" alt="{{ act.title }}" style="height: 190px; object-fit: cover; width: 100%;">
+            <img src="{{ act.photo_url|default:act.image.url }}" class="img-fluid" alt="{{ act.title }}" style="height: 190px; object-fit: cover; width: 100%;">
           {% else %}
             <div class="p-4 bg-light text-center border-bottom d-flex flex-column align-items-center justify-content-center" style="height: 180px;">
               <div class="fs-1 text-primary mb-2">

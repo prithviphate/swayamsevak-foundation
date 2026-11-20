@@ -415,12 +415,20 @@ class Activity(models.Model):
 
     @property
     def photo_url(self):
-        """Returns valid media or static URL for the image"""
+        """Returns valid static or media URL for the image"""
         if self.image:
+            name = str(self.image.name).replace('\\', '/')
+            if name.startswith('gallery/'):
+                base = name.split('/')[-1]
+                return f"/static/images/gallery/{base}"
+            if name.startswith('activities/'):
+                base = name.split('/')[-1]
+                return f"/static/images/activities/{base}"
             try:
                 return self.image.url
             except Exception:
                 pass
+            return f"/media/{name}"
         return ""
 
 
@@ -719,12 +727,20 @@ class GalleryMedia(models.Model):
 
     @property
     def photo_url(self):
-        """Returns valid media or static URL for the image"""
+        """Returns valid static or media URL for the image"""
         if self.image:
+            name = str(self.image.name).replace('\\', '/')
+            if name.startswith('gallery/'):
+                base = name.split('/')[-1]
+                return f"/static/images/gallery/{base}"
+            if name.startswith('activities/'):
+                base = name.split('/')[-1]
+                return f"/static/images/activities/{base}"
             try:
                 return self.image.url
             except Exception:
                 pass
+            return f"/media/{name}"
         return ""
 
 
